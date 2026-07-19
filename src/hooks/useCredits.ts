@@ -29,25 +29,21 @@ export function useCredits() {
   useEffect(() => {
     if (!user || !supabase) return
 
-    let subscribed = false
-    const channel = supabase.channel(`credits-${user.id}`)
+    let interval: ReturnType<typeof setInterval>
 
-    channel.on("postgres_changes",
-      { event: "UPDATE", schema: "public", table: "users", filter: `id=eq.${user.id}` },
-      (payload: any) => {
-        const updated = payload.new as { credits?: number }
-        if (updated.credits !== undefined) setCredits(updated.credits)
-      }
-    )
-
-    channel.subscribe((status: string) => {
-      subscribed = status === "SUBSCRIBED"
-    })
-
-    return () => {
-      subscribed = false
-      supabase.removeChannel(channel)
+    const fetchCredits = async () => {
+      const { data } = await supabase
+        .from("users")
+        .select("credits")
+        .eq("id", user.id)
+        .single()
+      if (data) setCredits(data.credits)
     }
+
+    fetchCredits()
+    interval = setInterval(fetchCredits, 10000)
+
+    return () => clearInterval(interval)
   }, [user?.id])
 
   const hasEnoughCredits = useCallback(
