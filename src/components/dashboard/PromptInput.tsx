@@ -1,0 +1,263 @@
+"use client"
+
+import { useState } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import {
+  ChevronDown,
+  ChevronUp,
+  Sparkles,
+  ImageIcon,
+  VideoIcon,
+  AlertTriangle,
+  Zap,
+} from "lucide-react"
+import { Textarea } from "@/components/ui/textarea"
+import { Button } from "@/components/ui/button"
+import { Label } from "@/components/ui/label"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs"
+import { cn } from "@/lib/utils"
+import { IMAGE_MODELS, VIDEO_MODELS, ASPECT_RATIOS, STYLES, CREDITS_PER_GENERATION } from "@/lib/constants"
+import { useCredits } from "@/hooks/useCredits"
+import type { GenerationType } from "@/types"
+
+interface PromptInputProps {
+  onGenerate: (data: GenerationFormData) => Promise<void>
+  isGenerating: boolean
+}
+
+export interface GenerationFormData {
+  prompt: string
+  negativePrompt?: string
+  type: GenerationType
+  model: string
+  aspectRatio: string
+  style: string
+  width?: number
+  height?: number
+  batchCount: number
+}
+
+export function PromptInput({ onGenerate, isGenerating }: PromptInputProps) {
+  const { credits, hasEnoughCredits } = useCredits()
+  const [type, setType] = useState<GenerationType>("image")
+  const [prompt, setPrompt] = useState("")
+  const [negativePrompt, setNegativePrompt] = useState("")
+  const [showNegative, setShowNegative] = useState(false)
+  const [model, setModel] = useState(IMAGE_MODELS[0].id)
+  const [aspectRatio, setAspectRatio] = useState("1:1")
+  const [style, setStyle] = useState("none")
+  const [batchCount, setBatchCount] = useState(1)
+
+  const models = type === "image" ? IMAGE_MODELS : VIDEO_MODELS
+  const creditCost = CREDITS_PER_GENERATION[type] * batchCount
+  const canGenerate = prompt.trim().length > 0 && hasEnoughCredits(type) && !isGenerating
+  const selectedRatio = ASPECT_RATIOS.find((r) => r.value === aspectRatio)
+
+  const handleTypeChange = (value: string) => {
+    const newType = value as GenerationType
+    setType(newType)
+    setModel(newType === "image" ? IMAGE_MODELS[0].id : VIDEO_MODELS[0].id)
+  }
+
+  const handleSubmit = () => {
+    if (!canGenerate) return
+    onGenerate({
+      prompt: prompt.trim(),
+      negativePrompt: negativePrompt.trim() || undefined,
+      type,
+      model,
+      aspectRatio,
+      style,
+      width: selectedRatio?.width,
+      height: selectedRatio?.height,
+      batchCount,
+    })
+  }
+
+  return (
+    <div className="space-y-5">
+      <Tabs value={type} onValueChange={handleTypeChange} className="w-full">
+        <TabsList className="w-full">
+          <TabsTrigger value="image" className="flex-1 gap-2">
+            <ImageIcon className="h-4 w-4" />
+            Image
+          </TabsTrigger>
+          <TabsTrigger value="video" className="flex-1 gap-2">
+            <VideoIcon className="h-4 w-4" />
+            Video
+          </TabsTrigger>
+        </TabsList>
+      </Tabs>
+
+      <div className="space-y-2">
+        <Label htmlFor="prompt">Prompt</Label>
+        <Textarea
+          id="prompt"
+          placeholder="A serene mountain landscape at sunset..."
+          value={prompt}
+          onChange={(e) => setPrompt(e.target.value)}
+          className="min-h-[100px] resize-y"
+          disabled={isGenerating}
+        />
+      </div>
+
+      <div>
+        <button
+          type="button"
+          onClick={() => setShowNegative(!showNegative)}
+          className="flex items-center gap-1.5 text-sm text-zinc-400 hover:text-zinc-200 transition-colors"
+        >
+          {showNegative ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+          Negative Prompt
+        </button>
+        <AnimatePresence>
+          {showNegative && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="overflow-hidden"
+            >
+              <div className="pt-2">
+                <Textarea
+                  placeholder="Things to avoid in the generation..."
+                  value={negativePrompt}
+                  onChange={(e) => setNegativePrompt(e.target.value)}
+                  className="min-h-[80px] resize-y"
+                  disabled={isGenerating}
+                />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label>Model</Label>
+          <Select value={model} onValueChange={setModel} disabled={isGenerating}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {models.map((m) => (
+                <SelectItem key={m.id} value={m.id}>
+                  {m.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="space-y-2">
+          <Label>Style</Label>
+          <Select value={style} onValueChange={setStyle} disabled={isGenerating}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {STYLES.map((s) => (
+                <SelectItem key={s.value} value={s.value}>
+                  {s.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <Label>Aspect Ratio</Label>
+        <div className="grid grid-cols-5 gap-2">
+          {ASPECT_RATIOS.map((ratio) => (
+            <button
+              key={ratio.value}
+              type="button"
+              onClick={() => setAspectRatio(ratio.value)}
+              disabled={isGenerating}
+              className={cn(
+                "flex flex-col items-center justify-center rounded-lg border px-2 py-2.5 text-xs transition-all duration-200",
+                aspectRatio === ratio.value
+                  ? "border-purple-600 bg-purple-600/10 text-purple-300"
+                  : "border-zinc-700 bg-zinc-900 text-zinc-400 hover:border-zinc-600 hover:text-zinc-300"
+              )}
+            >
+              <span className="font-medium">{ratio.label.split(" ")[0]}</span>
+              <span className="text-[10px] opacity-70 mt-0.5">{ratio.label.split(" ")[1]?.replace(/[()]/g, "")}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <Label>Batch Count</Label>
+        <div className="flex gap-2">
+          {[1, 2, 4].map((count) => (
+            <button
+              key={count}
+              type="button"
+              onClick={() => setBatchCount(count)}
+              disabled={isGenerating}
+              className={cn(
+                "flex-1 rounded-lg border py-2 text-sm font-medium transition-all duration-200",
+                batchCount === count
+                  ? "border-purple-600 bg-purple-600/10 text-purple-300"
+                  : "border-zinc-700 bg-zinc-900 text-zinc-400 hover:border-zinc-600 hover:text-zinc-300"
+              )}
+            >
+              {count}x
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-3">
+        <Button
+          onClick={handleSubmit}
+          disabled={!canGenerate}
+          size="xl"
+          className="w-full gap-2 text-base"
+        >
+          {isGenerating ? (
+            <>
+              <div className="h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+              Generating...
+            </>
+          ) : (
+            <>
+              <Sparkles className="h-5 w-5" />
+              Generate {type === "image" ? "Image" : "Video"}
+            </>
+          )}
+        </Button>
+
+        <div className="flex items-center justify-between text-xs text-zinc-500">
+          <div className="flex items-center gap-1.5">
+            <Zap className="h-3.5 w-3.5 text-yellow-500" />
+            <span>
+              Cost: <span className="text-purple-400 font-medium">{creditCost}</span> credits
+            </span>
+          </div>
+          {!hasEnoughCredits(type) && (
+            <div className="flex items-center gap-1 text-red-400">
+              <AlertTriangle className="h-3.5 w-3.5" />
+              <span>Insufficient credits</span>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
