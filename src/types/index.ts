@@ -15,6 +15,7 @@ export interface User {
   referred_by?: string
   total_generations: number
   is_admin: boolean
+  blocked: boolean
   created_at: string
 }
 
@@ -34,6 +35,8 @@ export interface Generation {
   seed?: number
   is_public: boolean
   likes_count: number
+  flagged: boolean
+  flagged_reason?: string
   created_at: string
 }
 
@@ -65,6 +68,47 @@ export interface Coupon {
   current_uses: number
   expires_at: string
   is_active: boolean
+}
+
+export interface SystemLog {
+  id: string
+  level: string
+  action: string
+  message?: string
+  user_id?: string
+  ip_address?: string
+  metadata?: Record<string, any>
+  created_at: string
+}
+
+export interface FeatureFlag {
+  id: string
+  key: string
+  label: string
+  enabled: boolean
+  description?: string
+  created_at: string
+  updated_at: string
+}
+
+export interface RateLimit {
+  id: string
+  plan: string
+  max_daily_generations: number
+  max_concurrent: number
+  created_at: string
+  updated_at: string
+}
+
+export interface AdminModel {
+  id: string
+  key: string
+  name: string
+  type: GenerationType
+  provider: string
+  enabled: boolean
+  credit_cost: number
+  created_at: string
 }
 
 export interface SavedPrompt {
