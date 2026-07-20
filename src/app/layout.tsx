@@ -15,7 +15,19 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "AuraAI - Generate Stunning AI Images & Videos",
-  description: "Transform your ideas into breathtaking visuals with AuraAI. Powered by cutting-edge AI.",
+  description: "Transform your ideas into breathtaking visuals with AuraAI. Powered by cutting-edge AI models for image and video generation.",
+  keywords: ["AI image generation", "AI video generation", "text to image", "text to video", "AI art", "AI creator"],
+  openGraph: {
+    title: "AuraAI - Generate Stunning AI Images & Videos",
+    description: "Transform your ideas into breathtaking visuals with AuraAI. Powered by cutting-edge AI.",
+    type: "website",
+    siteName: "AuraAI",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "AuraAI - AI Image & Video Generation",
+    description: "Create stunning AI images and videos from text prompts.",
+  },
 };
 
 export default function RootLayout({
@@ -35,4 +47,3 @@ export default function RootLayout({
     </html>
   );
 }
-

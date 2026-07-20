@@ -2,142 +2,178 @@
 
 import { motion } from "framer-motion"
 import Link from "next/link"
-import { ArrowRight, Sparkles } from "lucide-react"
+import { ArrowRight, Sparkles, Check } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
-
-const floatingCards = [
-  { gradient: "from-purple-600 to-pink-600", delay: 0, x: -120, y: -40 },
-  { gradient: "from-blue-600 to-cyan-600", delay: 0.15, x: 120, y: -60 },
-  { gradient: "from-orange-600 to-red-600", delay: 0.3, x: -80, y: 60 },
-  { gradient: "from-emerald-600 to-teal-600", delay: 0.45, x: 80, y: 50 },
-  { gradient: "from-violet-600 to-purple-600", delay: 0.6, x: 0, y: -90 },
-]
 
 const stats = [
-  { label: "Users", value: "10K+" },
+  { label: "Active Users", value: "10K+" },
   { label: "Generations", value: "100K+" },
   { label: "Uptime", value: "99.9%" },
+]
+
+const benefits = [
+  "No credit card required",
+  "100 free credits on signup",
+  "Cancel anytime",
 ]
 
 export default function Hero() {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-black">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(120,50,200,0.15),transparent_60%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(220,30,120,0.1),transparent_50%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(168,85,247,0.12),transparent_60%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(59,130,246,0.08),transparent_50%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(244,114,182,0.08),transparent_50%)]" />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="max-w-4xl"
-        >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-purple-500/30 bg-purple-500/10 text-purple-300 text-sm mb-6">
-            <Sparkles className="w-4 h-4" />
-            <span>AI-Powered Creativity</span>
-          </div>
+      <div className="absolute inset-0 opacity-20">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-600 rounded-full blur-[128px]" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-pink-600 rounded-full blur-[128px]" />
+        <div className="absolute top-1/2 right-1/3 w-64 h-64 bg-blue-600 rounded-full blur-[96px]" />
+      </div>
 
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-tight">
-            <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-orange-400 bg-clip-text text-transparent animate-pulse">
-              Generate Stunning
-            </span>
-            <br />
-            <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-              AI Images & Videos
-            </span>
-          </h1>
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div className="grid lg:grid-cols-2 gap-16 items-center">
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-purple-500/30 bg-purple-500/10 text-purple-300 text-sm mb-6">
+              <Sparkles className="w-4 h-4" />
+              <span>AI-Powered Creativity</span>
+            </div>
 
-          <p className="mt-6 text-lg sm:text-xl text-zinc-400 max-w-2xl mx-auto">
-            Transform your ideas into breathtaking visuals with AuraAI. Powered by cutting-edge AI.
-          </p>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.1]">
+              <span className="text-white">
+                Generate Stunning
+              </span>
+              <br />
+              <span className="text-gradient">
+                AI Images & Videos
+              </span>
+            </h1>
 
-          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link href="/signup">
-              <Button
-                size="xl"
-                variant="premium"
-                className="group text-base"
-              >
-                Get Started Free
-                <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
-              </Button>
-            </Link>
-            <Link href="/gallery">
-              <Button
-                size="xl"
-                variant="outline"
-                className="text-base border-zinc-700 hover:bg-zinc-800/80"
-              >
-                See Gallery
-              </Button>
-            </Link>
-          </div>
-        </motion.div>
+            <p className="mt-6 text-lg sm:text-xl text-zinc-400 max-w-lg leading-relaxed">
+              Transform your ideas into breathtaking visuals with AuraAI. Powered by cutting-edge AI models for image and video generation.
+            </p>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          className="relative w-full max-w-3xl h-[300px] sm:h-[400px] mt-16"
-        >
-          {floatingCards.map((card, i) => (
+            <div className="mt-8 flex flex-col sm:flex-row items-start gap-4">
+              <Link href="/signup">
+                <Button size="xl" variant="premium" className="group text-base px-8 py-6 text-lg">
+                  Get Started Free
+                  <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
+                </Button>
+              </Link>
+              <Link href="/gallery">
+                <Button size="xl" variant="outline" className="text-base border-zinc-700 hover:bg-zinc-800/80 px-8 py-6 text-lg">
+                  View Gallery
+                </Button>
+              </Link>
+            </div>
+
             <motion.div
-              key={i}
-              className={cn(
-                "absolute rounded-2xl bg-gradient-to-br w-40 h-28 sm:w-48 sm:h-32 shadow-2xl",
-                card.gradient
-              )}
-              style={{
-                left: "50%",
-                top: "50%",
-                marginLeft: -96,
-                marginTop: -64,
-              }}
-              initial={{ opacity: 0, scale: 0.5, x: 0, y: 0 }}
-              animate={{
-                opacity: [0, 1, 1, 0.9, 1],
-                scale: [0.5, 1, 1, 1.02, 1],
-                x: [0, card.x, card.x + 10, card.x - 5, card.x],
-                y: [0, card.y, card.y - 10, card.y + 5, card.y],
-              }}
-              transition={{
-                duration: 1,
-                delay: 0.5 + card.delay,
-                ease: "easeOut",
-                x: {
-                  duration: 4,
-                  delay: 1 + card.delay,
-                  repeat: Infinity,
-                  repeatType: "reverse",
-                  ease: "easeInOut",
-                },
-                y: {
-                  duration: 5,
-                  delay: 1 + card.delay,
-                  repeat: Infinity,
-                  repeatType: "reverse",
-                  ease: "easeInOut",
-                },
-              }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="mt-8 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-8"
             >
-              <div className="w-full h-full rounded-2xl bg-white/10 backdrop-blur-sm p-4 flex flex-col justify-end">
-                <div className="w-3/4 h-2 rounded-full bg-white/20 mb-2" />
-                <div className="w-1/2 h-2 rounded-full bg-white/20" />
-              </div>
+              {benefits.map((benefit, i) => (
+                <div key={i} className="flex items-center gap-2 text-sm text-zinc-500">
+                  <div className="flex-shrink-0 w-5 h-5 rounded-full bg-purple-500/10 flex items-center justify-center">
+                    <Check className="w-3 h-3 text-purple-400" />
+                  </div>
+                  {benefit}
+                </div>
+              ))}
             </motion.div>
-          ))}
-        </motion.div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="relative hidden lg:block"
+          >
+            <div className="relative w-full aspect-square max-w-lg mx-auto">
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-600/20 to-pink-600/20 rounded-3xl animate-pulse-glow" />
+
+              <div className="relative z-10 space-y-4">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.4 }}
+                  className="glass rounded-2xl p-6 ml-12"
+                >
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                      <Sparkles className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <div className="text-sm font-medium text-zinc-100">Image Generation</div>
+                      <div className="text-xs text-zinc-500">Flux Schnell</div>
+                    </div>
+                  </div>
+                  <div className="rounded-xl bg-zinc-800/50 p-4">
+                    <div className="w-full aspect-video rounded-lg bg-gradient-to-br from-purple-900/50 to-pink-900/50 flex items-center justify-center">
+                      <span className="text-6xl"></span>
+                    </div>
+                  </div>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.6 }}
+                  className="glass rounded-2xl p-6 mr-12 -mt-2"
+                >
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
+                      <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    </div>
+                    <div>
+                      <div className="text-sm font-medium text-zinc-100">Video Generation</div>
+                      <div className="text-xs text-zinc-500">Luma Ray</div>
+                    </div>
+                  </div>
+                  <div className="rounded-xl bg-zinc-800/50 p-4">
+                    <div className="w-full aspect-video rounded-lg bg-gradient-to-br from-blue-900/50 to-cyan-900/50 flex items-center justify-center">
+                      <span className="text-6xl"></span>
+                    </div>
+                  </div>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5, delay: 0.8 }}
+                  className="absolute -right-4 top-8 glass-light rounded-xl px-4 py-3"
+                >
+                  <div className="flex items-center gap-2">
+                    <div className="flex -space-x-2">
+                      {[1, 2, 3].map((i) => (
+                        <div key={i} className="w-7 h-7 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 border-2 border-zinc-900 flex items-center justify-center text-xs font-bold text-white">
+                          {String.fromCharCode(64 + i)}
+                        </div>
+                      ))}
+                    </div>
+                    <div className="text-xs text-zinc-400">
+                      <span className="text-purple-400 font-medium">1.2K+</span> creators
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.8 }}
-          className="flex items-center justify-center gap-8 sm:gap-16 mt-8 py-8 border-t border-zinc-800 w-full max-w-2xl"
+          className="flex items-center justify-center gap-8 sm:gap-16 mt-20 pt-8 border-t border-zinc-800/50 max-w-2xl mx-auto"
         >
           {stats.map((stat, i) => (
             <div key={i} className="text-center">
-              <div className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+              <div className="text-3xl sm:text-4xl font-bold text-gradient">
                 {stat.value}
               </div>
               <div className="text-sm text-zinc-500 mt-1">{stat.label}</div>
