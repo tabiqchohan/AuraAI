@@ -1,13 +1,13 @@
 "use client"
 
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion, AnimatePresence, LayoutGroup } from "framer-motion"
 import {
   Users, Image as ImageIcon, CreditCard, DollarSign, Search, Loader2, Plus, Pencil, Trash2,
-  CheckCircle2, XCircle, VideoIcon, Sparkles, Tag, Shield, ShieldOff, BarChart3, Cpu,
+  CheckCircle2, XCircle, VideoIcon, Sparkles, Tag, Shield, ShieldOff, Cpu,
   ScrollText, Mail, Flag, Download, Gauge, ToggleLeft, Ban, Unlock, LayoutDashboard, TrendingUp,
-  Activity, UserCheck, Eye, EyeOff, Send, RefreshCw, ChevronRight, AlertTriangle, Clock,
+  Activity, UserCheck, Eye, EyeOff, Send, Clock,
 } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
@@ -141,37 +141,39 @@ export default function AdminPageContent() {
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-1.5 mb-8 p-1.5 bg-zinc-900/50 backdrop-blur-sm border border-zinc-800/30 rounded-2xl w-fit">
-          {tabConfig.map((tab) => {
-            const Icon = tab.icon
-            const isActive = activeTab === tab.id
-            return (
-              <motion.button
-                key={tab.id}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => setActiveTab(tab.id)}
-                className={`relative flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${
-                  isActive
-                    ? "bg-zinc-800/80 text-zinc-100 shadow-lg shadow-black/20"
-                    : "text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/30"
-                }`}
-              >
-                {isActive && (
-                  <motion.div
-                    layoutId="tab-bg"
-                    className="absolute inset-0 rounded-xl bg-gradient-to-br from-purple-600/20 to-pink-600/10 border border-purple-500/10"
-                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                  />
-                )}
-                <div className={`relative z-10 flex items-center gap-2`}>
-                  <Icon className={`h-4 w-4 ${isActive ? "text-purple-400" : ""}`} />
-                  <span className="hidden sm:inline">{tab.label}</span>
-                </div>
-              </motion.button>
-            )
-          })}
-        </div>
+        <LayoutGroup>
+          <div className="flex flex-wrap gap-1.5 mb-8 p-1.5 bg-zinc-900/50 backdrop-blur-sm border border-zinc-800/30 rounded-2xl w-fit">
+            {tabConfig.map((tab) => {
+              const Icon = tab.icon
+              const isActive = activeTab === tab.id
+              return (
+                <motion.button
+                  key={tab.id}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`relative flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${
+                    isActive
+                      ? "bg-zinc-800/80 text-zinc-100 shadow-lg shadow-black/20"
+                      : "text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/30"
+                  }`}
+                >
+                  {isActive && (
+                    <motion.div
+                      layoutId="tab-bg"
+                      className="absolute inset-0 rounded-xl bg-gradient-to-br from-purple-600/20 to-pink-600/10 border border-purple-500/10"
+                      transition={{ type: "spring" as const, stiffness: 380, damping: 30 }}
+                    />
+                  )}
+                  <div className="relative z-10 flex items-center gap-2">
+                    <Icon className={`h-4 w-4 ${isActive ? "text-purple-400" : ""}`} />
+                    <span className="hidden sm:inline">{tab.label}</span>
+                  </div>
+                </motion.button>
+              )
+            })}
+          </div>
+        </LayoutGroup>
 
         <AnimatePresence mode="wait">
           <motion.div
