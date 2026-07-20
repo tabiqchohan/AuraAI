@@ -96,6 +96,7 @@ export function Sidebar({ className }: SidebarProps) {
               <Link
                 key={item.href}
                 href={item.href}
+                onClick={() => setCollapsed(false)}
                 className={cn(
                   "flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200",
                   isActive
@@ -119,6 +120,7 @@ export function Sidebar({ className }: SidebarProps) {
               <Link
                 key={item.href}
                 href={item.href}
+                onClick={() => setCollapsed(false)}
                 className={cn(
                   "flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200",
                   isActive
@@ -137,6 +139,7 @@ export function Sidebar({ className }: SidebarProps) {
               <Separator className="my-3" />
               <Link
                 href="/admin"
+                onClick={() => setCollapsed(false)}
                 className={cn(
                   "flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200",
                   pathname.startsWith("/admin")
