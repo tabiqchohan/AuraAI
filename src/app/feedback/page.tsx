@@ -1,8 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import { Navbar } from "@/components/layout/Navbar"
-import { Footer } from "@/components/layout/Footer"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
@@ -43,8 +41,7 @@ export default function FeedbackPage() {
 
   return (
     <>
-      <Navbar />
-      <main className="min-h-screen pt-24 pb-16 px-4 bg-black">
+      <section className="pt-24 pb-16 px-4 bg-black">
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-12">
             <div className="mx-auto w-16 h-16 rounded-2xl bg-purple-500/10 flex items-center justify-center mb-4">
@@ -125,8 +122,7 @@ export default function FeedbackPage() {
             </CardContent>
           </Card>
         </div>
-      </main>
-      <Footer />
+      </section>
     </>
   )
 }

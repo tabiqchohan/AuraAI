@@ -1,8 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import { Navbar } from "@/components/layout/Navbar"
-import { Footer } from "@/components/layout/Footer"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -14,8 +12,7 @@ import { toast } from "sonner"
 export default function ContactPage() {
   return (
     <>
-      <Navbar />
-      <main className="min-h-screen pt-24 pb-16 px-4 bg-black">
+      <section className="pt-24 pb-16 px-4 bg-black">
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-12">
             <h1 className="text-4xl font-bold text-white mb-4">Contact Us</h1>
@@ -66,8 +63,7 @@ export default function ContactPage() {
             </CardContent>
           </Card>
         </div>
-      </main>
-      <Footer />
+      </section>
     </>
   )
 }

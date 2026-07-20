@@ -6,20 +6,28 @@ import { createClient } from "@/lib/supabase/client"
 import { useUser } from "@/hooks/useUser"
 import { useCredits } from "@/hooks/useCredits"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { toast } from "sonner"
-import { User, Mail, CreditCard, Calendar, Shield, LogOut, Settings, Loader2, Sparkles } from "lucide-react"
+import { User, Mail, CreditCard, Calendar, Shield, LogOut, Settings, Loader2, Sparkles, Camera } from "lucide-react"
 import Link from "next/link"
 import { formatDate } from "@/lib/utils"
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
+} from "@/components/ui/dialog"
+import { Label } from "@/components/ui/label"
 
 export default function ProfilePage() {
   const { user, loading } = useUser()
   const { credits } = useCredits()
   const router = useRouter()
   const [loggingOut, setLoggingOut] = useState(false)
+  const [showAvatarDialog, setShowAvatarDialog] = useState(false)
+  const [avatarUrl, setAvatarUrl] = useState("")
+  const [savingAvatar, setSavingAvatar] = useState(false)
 
   const handleLogout = async () => {
     setLoggingOut(true)
@@ -27,6 +35,20 @@ export default function ProfilePage() {
     await supabase.auth.signOut()
     router.push("/")
     router.refresh()
+  }
+
+  const handleAvatarSave = async () => {
+    setSavingAvatar(true)
+    const supabase = createClient()
+    const { error } = await supabase.from("users").update({ avatar_url: avatarUrl }).eq("id", user!.id)
+    if (error) {
+      toast.error("Failed to update avatar")
+    } else {
+      toast.success("Avatar updated")
+      setShowAvatarDialog(false)
+      window.location.reload()
+    }
+    setSavingAvatar(false)
   }
 
   if (loading) {
@@ -64,10 +86,18 @@ export default function ProfilePage() {
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="flex items-center gap-4">
-                <Avatar className="h-16 w-16">
-                  <AvatarImage src={`https://avatar.vercel.sh/${user.email}`} alt={user.email} />
-                  <AvatarFallback className="text-lg">{user.email?.charAt(0).toUpperCase()}</AvatarFallback>
-                </Avatar>
+                <div className="relative group">
+                  <Avatar className="h-20 w-20">
+                    <AvatarImage src={(user as any).avatar_url || `https://avatar.vercel.sh/${user.email}`} alt={user.email} />
+                    <AvatarFallback className="text-xl">{user.email?.charAt(0).toUpperCase()}</AvatarFallback>
+                  </Avatar>
+                  <button
+                    onClick={() => { setAvatarUrl((user as any).avatar_url || ""); setShowAvatarDialog(true) }}
+                    className="absolute inset-0 flex items-center justify-center rounded-full bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <Camera className="h-5 w-5 text-white" />
+                  </button>
+                </div>
                 <div>
                   <h2 className="text-xl font-semibold text-zinc-100">{user.email?.split("@")[0]}</h2>
                   <p className="text-sm text-zinc-500">{user.email}</p>
@@ -176,6 +206,39 @@ export default function ProfilePage() {
           )}
         </div>
       </div>
+
+      <Dialog open={showAvatarDialog} onOpenChange={setShowAvatarDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Change Avatar</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="flex justify-center">
+              <Avatar className="h-24 w-24">
+                <AvatarImage src={avatarUrl || `https://avatar.vercel.sh/${user.email}`} alt="Preview" />
+                <AvatarFallback className="text-2xl">{user.email?.charAt(0).toUpperCase()}</AvatarFallback>
+              </Avatar>
+            </div>
+            <div className="space-y-2">
+              <Label>Avatar URL</Label>
+              <Input
+                value={avatarUrl}
+                onChange={(e) => setAvatarUrl(e.target.value)}
+                placeholder="https://example.com/avatar.jpg"
+                className="bg-zinc-800/50 border-zinc-700 text-zinc-100"
+              />
+              <p className="text-xs text-zinc-600">Paste an image URL or leave empty for default</p>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowAvatarDialog(false)}>Cancel</Button>
+            <Button onClick={handleAvatarSave} disabled={savingAvatar} className="bg-purple-600 hover:bg-purple-700">
+              {savingAvatar && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Save
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

@@ -35,10 +35,10 @@ import { useCredits } from "@/hooks/useCredits"
 import { toast } from "sonner"
 import type { GenerationType } from "@/types"
 
-export function GenerationForm() {
+export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
   const { credits, hasEnoughCredits, deductCredits } = useCredits()
   const [type, setType] = useState<GenerationType>("image")
-  const [prompt, setPrompt] = useState("")
+  const [prompt, setPrompt] = useState(initialPrompt || "")
   const [negativePrompt, setNegativePrompt] = useState("")
   const [showNegative, setShowNegative] = useState(false)
   const [model, setModel] = useState(IMAGE_MODELS[0].id)

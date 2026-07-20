@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { CreditBalance } from "@/components/dashboard/CreditBalance"
 import { GenerationForm } from "@/components/dashboard/GenerationForm"
@@ -9,6 +9,15 @@ import { Separator } from "@/components/ui/separator"
 
 export default function DashboardPage() {
   const [refreshKey, setRefreshKey] = useState(0)
+  const [initialPrompt, setInitialPrompt] = useState<string | undefined>(undefined)
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const promptParam = params.get("prompt")
+    if (promptParam) {
+      setInitialPrompt(promptParam)
+    }
+  }, [])
 
   const handleGenerationSuccess = () => {
     setRefreshKey((k) => k + 1)
@@ -29,7 +38,7 @@ export default function DashboardPage() {
 
       <div className="grid gap-8 lg:grid-cols-[1fr_400px]">
         <div className="space-y-8">
-          <GenerationForm />
+          <GenerationForm initialPrompt={initialPrompt} />
           <Separator className="bg-zinc-800" />
           <div>
             <h2 className="mb-6 text-xl font-semibold text-zinc-100">Your Generations</h2>
