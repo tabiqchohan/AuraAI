@@ -15,38 +15,34 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-950">
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold tracking-tight text-zinc-100">Dashboard</h1>
-            <p className="mt-1 text-sm text-zinc-500">
-              Generate stunning AI images and videos
-            </p>
-          </div>
-
-          <div className="grid gap-8 lg:grid-cols-[1fr_400px]">
-            <div className="space-y-8">
-              <GenerationForm />
-              <Separator className="bg-zinc-800" />
-              <div>
-                <h2 className="mb-6 text-xl font-semibold text-zinc-100">Your Generations</h2>
-                <GenerationGrid key={refreshKey} />
-              </div>
-            </div>
-
-            <div className="space-y-6">
-              <div className="lg:sticky lg:top-8">
-                <CreditBalance />
-              </div>
-            </div>
-          </div>
-        </motion.div>
+    <motion.div
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+    >
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold tracking-tight text-zinc-100">Dashboard</h1>
+        <p className="mt-1 text-sm text-zinc-500">
+          Generate stunning AI images and videos
+        </p>
       </div>
-    </div>
+
+      <div className="grid gap-8 lg:grid-cols-[1fr_400px]">
+        <div className="space-y-8">
+          <GenerationForm />
+          <Separator className="bg-zinc-800" />
+          <div>
+            <h2 className="mb-6 text-xl font-semibold text-zinc-100">Your Generations</h2>
+            <GenerationGrid key={refreshKey} />
+          </div>
+        </div>
+
+        <div className="space-y-6">
+          <div className="lg:sticky lg:top-8">
+            <CreditBalance />
+          </div>
+        </div>
+      </div>
+    </motion.div>
   )
 }
