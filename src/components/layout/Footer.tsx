@@ -2,9 +2,11 @@ import Link from "next/link"
 import { Sparkles } from "lucide-react"
 
 const footerLinks = [
+  { href: "/about", label: "About" },
   { href: "/privacy", label: "Privacy" },
   { href: "/terms", label: "Terms" },
   { href: "/contact", label: "Contact" },
+  { href: "/feedback", label: "Feedback" },
 ]
 
 export function Footer() {

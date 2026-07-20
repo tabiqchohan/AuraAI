@@ -80,12 +80,23 @@ CREATE TABLE IF NOT EXISTS coupons (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Feedback table
+CREATE TABLE IF NOT EXISTS feedback (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name TEXT,
+  email TEXT,
+  message TEXT NOT NULL,
+  rating INTEGER CHECK (rating >= 1 AND rating <= 5),
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- Enable RLS
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE generations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE likes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE saved_prompts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE coupons ENABLE ROW LEVEL SECURITY;
+ALTER TABLE feedback ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies
 DROP POLICY IF EXISTS "Users can read own data" ON users;
@@ -128,6 +139,12 @@ DROP POLICY IF EXISTS "Admins can update coupons" ON coupons;
 CREATE POLICY "Admins can update coupons" ON coupons FOR UPDATE USING (EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND is_admin = true));
 DROP POLICY IF EXISTS "Admins can delete coupons" ON coupons;
 CREATE POLICY "Admins can delete coupons" ON coupons FOR DELETE USING (EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND is_admin = true));
+
+-- Feedback policies
+DROP POLICY IF EXISTS "Anyone can insert feedback" ON feedback;
+CREATE POLICY "Anyone can insert feedback" ON feedback FOR INSERT WITH CHECK (true);
+DROP POLICY IF EXISTS "Admins can read feedback" ON feedback;
+CREATE POLICY "Admins can read feedback" ON feedback FOR SELECT USING (EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND is_admin = true));
 
 -- Auto-create user profile on signup
 CREATE OR REPLACE FUNCTION public.handle_new_user()

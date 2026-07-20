@@ -19,6 +19,7 @@ import {
   Sparkles,
   ChevronLeft,
   PanelRightOpen,
+  User,
 } from "lucide-react"
 
 interface SidebarProps {
@@ -27,6 +28,7 @@ interface SidebarProps {
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/dashboard/profile", label: "Profile", icon: User },
   { href: "/dashboard/gallery", label: "Gallery", icon: Images },
   { href: "/dashboard/generations", label: "My Generations", icon: History },
   { href: "/dashboard/prompts", label: "Saved Prompts", icon: Bookmark },

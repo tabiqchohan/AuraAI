@@ -26,6 +26,8 @@ import {
   User,
   Settings,
   LayoutDashboard,
+  History,
+  MessageSquare,
   Sun,
   Moon,
 } from "lucide-react"
@@ -125,8 +127,14 @@ export function Navbar() {
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link href="/dashboard/generations" className="cursor-pointer">
+                    <Link href="/dashboard/profile" className="cursor-pointer">
                       <User className="mr-2 h-4 w-4" />
+                      Profile
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/dashboard/generations" className="cursor-pointer">
+                      <History className="mr-2 h-4 w-4" />
                       My Generations
                     </Link>
                   </DropdownMenuItem>
@@ -138,9 +146,15 @@ export function Navbar() {
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
+                    <Link href="/feedback" className="cursor-pointer text-zinc-400 focus:text-zinc-400">
+                      <MessageSquare className="mr-2 h-4 w-4" />
+                      Feedback
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
                     <Link href="/login?signout=true" className="cursor-pointer text-red-400 focus:text-red-400">
                       <LogOut className="mr-2 h-4 w-4" />
-                      Logout
+                      Sign Out
                     </Link>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
