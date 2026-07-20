@@ -20,6 +20,8 @@ import {
   VideoIcon,
   Sparkles,
   Tag,
+  Shield,
+  ShieldOff,
 } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
@@ -181,6 +183,7 @@ function UsersTab() {
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState("")
   const [hasMore, setHasMore] = useState(true)
+  const [adminTarget, setAdminTarget] = useState<User | null>(null)
   const PAGE_SIZE = 15
 
   useEffect(() => {
@@ -216,6 +219,14 @@ function UsersTab() {
     setUsers((prev) => prev.map((u) => (u.id === userId ? { ...u, credits } : u)))
   }
 
+  const handleToggleAdmin = async (target: User) => {
+    if (!supabase) return
+    const newAdmin = !target.is_admin
+    await supabase.from("users").update({ is_admin: newAdmin }).eq("id", target.id)
+    setUsers((prev) => prev.map((u) => (u.id === target.id ? { ...u, is_admin: newAdmin } : u)))
+    setAdminTarget(null)
+  }
+
   const planBadge = (plan: string) => {
     const colors: Record<string, string> = { free: "secondary", basic: "default", pro: "success" }
     return <Badge variant={(colors[plan] as any) || "secondary"} className="capitalize text-[10px]">{plan}</Badge>
@@ -239,6 +250,7 @@ function UsersTab() {
             <thead>
               <tr className="border-b border-zinc-800">
                 <th className="px-4 py-3 text-left font-medium text-zinc-500">Email</th>
+                <th className="px-4 py-3 text-left font-medium text-zinc-500">Admin</th>
                 <th className="px-4 py-3 text-left font-medium text-zinc-500">Credits</th>
                 <th className="px-4 py-3 text-left font-medium text-zinc-500">Plan</th>
                 <th className="px-4 py-3 text-left font-medium text-zinc-500">Status</th>
@@ -250,15 +262,22 @@ function UsersTab() {
             <tbody>
               {loading ? Array.from({ length: 5 }).map((_, i) => (
                 <tr key={i} className="border-b border-zinc-800/50">
-                  {Array.from({ length: 7 }).map((_, j) => (
+                  {Array.from({ length: 8 }).map((_, j) => (
                     <td key={j} className="px-4 py-3"><Skeleton className="h-4 w-full bg-zinc-800" /></td>
                   ))}
                 </tr>
               )) : users.length === 0 ? (
-                <tr><td colSpan={7} className="px-4 py-12 text-center text-zinc-500">No users found</td></tr>
+                <tr><td colSpan={8} className="px-4 py-12 text-center text-zinc-500">No users found</td></tr>
               ) : users.map((u) => (
                 <tr key={u.id} className="border-b border-zinc-800/50 hover:bg-zinc-800/30 transition-colors">
                   <td className="px-4 py-3 text-zinc-300">{u.email}</td>
+                  <td className="px-4 py-3">
+                    {u.is_admin ? (
+                      <Shield className="h-4 w-4 text-purple-400" />
+                    ) : (
+                      <span className="text-zinc-600">-</span>
+                    )}
+                  </td>
                   <td className="px-4 py-3">
                     <span className="inline-flex items-center gap-1 text-zinc-300">
                       <Sparkles className="h-3 w-3 text-purple-400" />
@@ -272,10 +291,15 @@ function UsersTab() {
                   <td className="px-4 py-3 text-zinc-300">{u.referred_by ? 1 : 0}</td>
                   <td className="px-4 py-3 text-zinc-500 text-xs">{formatDate(u.created_at)}</td>
                   <td className="px-4 py-3 text-right">
-                    <Button variant="ghost" size="sm" onClick={() => {
-                      const newCredits = prompt("Enter new credit amount:", String(u.credits))
-                      if (newCredits && !isNaN(parseInt(newCredits))) handleUpdateCredits(u.id, parseInt(newCredits))
-                    }}>Edit Credits</Button>
+                    <div className="flex items-center justify-end gap-1">
+                      <Button variant="ghost" size="sm" onClick={() => setAdminTarget(u)} title={u.is_admin ? "Remove Admin" : "Make Admin"}>
+                        {u.is_admin ? <ShieldOff className="h-4 w-4 text-red-400" /> : <Shield className="h-4 w-4 text-zinc-400" />}
+                      </Button>
+                      <Button variant="ghost" size="sm" onClick={() => {
+                        const newCredits = prompt("Enter new credit amount:", String(u.credits))
+                        if (newCredits && !isNaN(parseInt(newCredits))) handleUpdateCredits(u.id, parseInt(newCredits))
+                      }}>Edit Credits</Button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -283,6 +307,25 @@ function UsersTab() {
           </table>
         </div>
       </Card>
+
+      <Dialog open={!!adminTarget} onOpenChange={(o) => { if (!o) setAdminTarget(null) }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{adminTarget?.is_admin ? "Remove Admin" : "Make Admin"}</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-zinc-400">
+            {adminTarget?.is_admin
+              ? `Remove admin privileges from ${adminTarget.email}?`
+              : `Grant admin privileges to ${adminTarget?.email}?`}
+          </p>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setAdminTarget(null)}>Cancel</Button>
+            <Button onClick={() => adminTarget && handleToggleAdmin(adminTarget)} className={adminTarget?.is_admin ? "bg-red-600 hover:bg-red-700" : "bg-purple-600 hover:bg-purple-700"}>
+              {adminTarget?.is_admin ? "Remove Admin" : "Make Admin"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
