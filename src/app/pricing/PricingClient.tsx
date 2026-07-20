@@ -4,7 +4,6 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { motion } from "framer-motion"
-import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Switch } from "@/components/ui/switch"
@@ -34,11 +33,9 @@ const cardVariants = {
 export function PricingClient() {
   const [yearly, setYearly] = useState(false)
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null)
+  const [selectedPlan, setSelectedPlan] = useState<string>("basic")
   const { user } = useUser()
   const router = useRouter()
-  const [supabase] = useState(() => {
-    try { return createClient() } catch { return null }
-  })
 
   const getPrice = (plan: (typeof PLANS)[number]) => {
     if (plan.price === 0) return "Free"
@@ -93,7 +90,7 @@ export function PricingClient() {
   }
 
   const handleAction = async (plan: (typeof PLANS)[number]) => {
-    if (!user || !supabase) {
+    if (!user) {
       router.push("/signup")
       return
     }
@@ -111,17 +108,16 @@ export function PricingClient() {
     setLoadingPlan(plan.id)
 
     try {
-      const { data, error } = await supabase.functions.invoke("stripe-create-checkout", {
-        body: {
-          planId: plan.id,
-          userId: user.id,
-          userEmail: user.email,
-          yearly,
-        },
+      const res = await fetch("/api/stripe/create-checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ planId: plan.id, yearly }),
       })
 
-      if (error) {
-        toast.error(error.message || "Failed to create checkout session")
+      const data = await res.json()
+
+      if (!res.ok) {
+        toast.error(data.error || "Failed to create checkout session")
         return
       }
 
@@ -192,9 +188,10 @@ export function PricingClient() {
             <motion.div
               key={plan.id}
               variants={cardVariants}
+              onClick={() => setSelectedPlan(plan.id)}
               className={cn(
-                "relative rounded-2xl border p-8 flex flex-col transition-all duration-300",
-                plan.popular
+                "relative rounded-2xl border p-8 flex flex-col transition-all duration-300 cursor-pointer",
+                selectedPlan === plan.id
                   ? "border-purple-500 bg-purple-500/5 shadow-[0_0_40px_-10px_rgba(168,85,247,0.3)] md:scale-105"
                   : "border-zinc-800 bg-zinc-900/50 backdrop-blur-sm hover:border-zinc-700"
               )}

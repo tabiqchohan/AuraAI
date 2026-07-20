@@ -9,7 +9,12 @@ export const PLANS: SubscriptionPlan[] = [
     prices: { USD: 0, INR: 0, PKR: 0 },
     priceId: "",
     credits: 100,
-    features: ["100 one-time credits", "Image generation", "Basic quality"],
+    features: [
+      "100 one-time credits",
+      "Image generation",
+      "Basic quality",
+      "20 images or 5 videos",
+    ],
   },
   {
     id: "basic",
@@ -18,7 +23,13 @@ export const PLANS: SubscriptionPlan[] = [
     prices: { USD: 6, INR: 499, PKR: 1650 },
     priceId: process.env.NEXT_PUBLIC_STRIPE_BASIC_PRICE_ID || "",
     credits: 500,
-    features: ["500 credits/month", "Image & Video generation", "Priority queue", "HD quality"],
+    features: [
+      "500 credits/month",
+      "Image & Video generation",
+      "Priority queue",
+      "HD quality",
+      "100 images or 25 videos per month",
+    ],
     popular: true,
   },
   {
@@ -28,7 +39,15 @@ export const PLANS: SubscriptionPlan[] = [
     prices: { USD: 12, INR: 999, PKR: 3300 },
     priceId: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID || "",
     credits: 2000,
-    features: ["2000 credits/month", "Image & Video generation", "Priority queue", "4K quality", "Upscaling", "Background removal"],
+    features: [
+      "2000 credits/month",
+      "Image & Video generation",
+      "Priority queue",
+      "4K quality",
+      "Upscaling",
+      "Background removal",
+      "400 images or 100 videos per month",
+    ],
   },
 ]
 
