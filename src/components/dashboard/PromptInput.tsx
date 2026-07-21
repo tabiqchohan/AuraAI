@@ -62,7 +62,6 @@ export function PromptInput({ onGenerate, isGenerating }: PromptInputProps) {
   const [duration, setDuration] = useState(5)
 
   const models = type === "image" ? IMAGE_MODELS : VIDEO_MODELS
-  const isKling = model.startsWith("kling")
   const creditCost = CREDITS_PER_GENERATION[type] * batchCount
   const canGenerate = prompt.trim().length > 0 && hasEnoughCredits(type) && !isGenerating
   const selectedRatio = ASPECT_RATIOS.find((r) => r.value === aspectRatio)
@@ -87,7 +86,7 @@ export function PromptInput({ onGenerate, isGenerating }: PromptInputProps) {
       width: selectedRatio?.width,
       height: selectedRatio?.height,
       batchCount,
-      duration: isKling ? duration : undefined,
+      duration,
     })
   }
 
@@ -229,7 +228,7 @@ export function PromptInput({ onGenerate, isGenerating }: PromptInputProps) {
         </div>
       </div>
 
-      {isKling && (
+      {type === "video" && (
         <div className="space-y-2">
           <Label>Duration</Label>
           <div className="flex gap-2">

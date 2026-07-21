@@ -67,16 +67,14 @@ export const IMAGE_MODELS = [
 export const VIDEO_MODELS = [
   { id: "luma/ray", name: "Luma Ray", provider: "replicate" },
   { id: "minimax/video-01", name: "MiniMax", provider: "replicate" },
-  { id: "kling-v1.5", name: "Kling AI 1.5", provider: "kling" },
-  { id: "kling-v1", name: "Kling AI 1.0", provider: "kling" },
+  { id: "pixverse/pixverse-v6", name: "PixVerse V6", provider: "replicate" },
+  { id: "bytedance/seedance-1-pro", name: "Seedance 1 Pro", provider: "replicate" },
 ]
 
 export const VIDEO_DURATION_OPTIONS = [
   { label: "5 sec", value: 5 },
   { label: "10 sec", value: 10 },
-  { label: "30 sec", value: 30 },
-  { label: "60 sec (1 min)", value: 60 },
-  { label: "120 sec (2 min)", value: 120 },
+  { label: "15 sec", value: 15 },
 ]
 
 export const ASPECT_RATIOS = [
