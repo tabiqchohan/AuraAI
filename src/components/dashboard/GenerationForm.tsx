@@ -11,6 +11,7 @@ import {
   AlertTriangle,
   Zap,
   Loader2,
+  Lock,
 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
@@ -30,13 +31,15 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs"
 import { cn, formatCredits } from "@/lib/utils"
-import { IMAGE_MODELS, VIDEO_MODELS, ASPECT_RATIOS, STYLES, CREDITS_PER_GENERATION, VIDEO_DURATION_OPTIONS, type Template } from "@/lib/constants"
+import { IMAGE_MODELS, VIDEO_MODELS, ASPECT_RATIOS, STYLES, CREDITS_PER_GENERATION, VIDEO_DURATION_OPTIONS, ADDON_FEATURES, type Template } from "@/lib/constants"
 import { useCredits } from "@/hooks/useCredits"
+import { useUser } from "@/hooks/useUser"
 import { toast } from "sonner"
 import type { GenerationType } from "@/types"
 import { TemplatesGallery } from "./TemplatesGallery"
 
 export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
+  const { user } = useUser()
   const { credits, hasEnoughCredits, deductCredits } = useCredits()
   const [type, setType] = useState<GenerationType>("image")
   const [prompt, setPrompt] = useState(initialPrompt || "")
@@ -50,9 +53,17 @@ export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
   const [height, setHeight] = useState(1024)
   const [isGenerating, setIsGenerating] = useState(false)
   const [duration, setDuration] = useState(5)
+  const [enableUpscale, setEnableUpscale] = useState(false)
+  const [enableRemoveBg, setEnableRemoveBg] = useState(false)
+  const [enableVoiceover, setEnableVoiceover] = useState(false)
 
+  const isSubscribed = user?.subscription_plan === "basic" || user?.subscription_plan === "pro"
   const models = type === "image" ? IMAGE_MODELS : VIDEO_MODELS
-  const creditCost = CREDITS_PER_GENERATION[type] * batchCount
+  const baseCost = CREDITS_PER_GENERATION[type] * batchCount
+  const addonCost = (enableUpscale ? CREDITS_PER_GENERATION.upscale * batchCount : 0)
+    + (enableRemoveBg ? CREDITS_PER_GENERATION.removeBg * batchCount : 0)
+    + (enableVoiceover ? CREDITS_PER_GENERATION.voiceover : 0)
+  const creditCost = baseCost + addonCost
   const canGenerate = prompt.trim().length > 0 && hasEnoughCredits(type) && !isGenerating
   const selectedRatio = ASPECT_RATIOS.find((r) => r.value === aspectRatio)
   const isCustom = aspectRatio === "custom"
@@ -112,6 +123,9 @@ export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
           batchCount,
           duration,
           aspect_ratio: aspectRatio,
+          upscale: enableUpscale,
+          removeBg: enableRemoveBg,
+          voiceover: enableVoiceover,
         }),
       })
 
@@ -318,6 +332,38 @@ export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
                 {count}x
               </button>
             ))}
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label className="text-xs text-zinc-500 uppercase tracking-wider">Add-ons</Label>
+          <div className="grid grid-cols-3 gap-2">
+            {ADDON_FEATURES.map((f) => {
+              const isAvailable = !f.premiumOnly || isSubscribed
+              const isOn = f.id === "upscale" ? enableUpscale : f.id === "removeBg" ? enableRemoveBg : f.id === "voiceover" ? enableVoiceover : false
+              const toggle = () => {
+                if (!isAvailable) { window.location.href = "/pricing"; return }
+                if (f.id === "upscale") setEnableUpscale(!enableUpscale)
+                else if (f.id === "removeBg") setEnableRemoveBg(!enableRemoveBg)
+                else if (f.id === "voiceover") setEnableVoiceover(!enableVoiceover)
+              }
+              return (
+                <button
+                  key={f.id}
+                  type="button"
+                  onClick={toggle}
+                  className={`p-2.5 rounded-xl border text-left transition-all ${isOn ? "border-purple-500/40 bg-purple-600/10" : isAvailable ? "border-zinc-800 bg-zinc-900/50 hover:border-zinc-700" : "border-zinc-800/30 bg-zinc-900/30 opacity-50"}`}
+                >
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <span className="text-sm">{f.icon}</span>
+                    <span className="text-[11px] font-medium text-zinc-300 truncate">{f.name}</span>
+                    {f.premiumOnly && !isSubscribed && <Lock className="h-2.5 w-2.5 text-amber-400 shrink-0" />}
+                  </div>
+                  <p className="text-[9px] text-zinc-600 line-clamp-1">{f.description}</p>
+                  {f.creditCost > 0 && <p className="text-[9px] text-purple-400/70 mt-0.5">+{f.creditCost} credits</p>}
+                </button>
+              )
+            })}
           </div>
         </div>
 

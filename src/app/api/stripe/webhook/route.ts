@@ -39,26 +39,38 @@ export async function POST(request: Request) {
         const session = event.data.object as Stripe.Checkout.Session
         const userId = session.metadata?.user_id
         const planId = session.metadata?.plan_id
+        const credits = session.metadata?.credits
 
-        if (!userId || !planId) {
-          return NextResponse.json({ error: "Missing metadata" }, { status: 400 })
+        if (!userId) {
+          return NextResponse.json({ error: "Missing user_id" }, { status: 400 })
         }
 
-        const plan = PLANS.find((p) => p.id === (planId as PlanId))
-        if (!plan) {
-          return NextResponse.json({ error: "Invalid plan" }, { status: 400 })
+        if (planId) {
+          const plan = PLANS.find((p) => p.id === (planId as PlanId))
+          if (!plan) return NextResponse.json({ error: "Invalid plan" }, { status: 400 })
+
+          const subscriptionEnd = new Date()
+          subscriptionEnd.setMonth(subscriptionEnd.getMonth() + 1)
+
+          await supabase.from("users").update({
+            stripe_customer_id: session.customer as string,
+            subscription_status: "active",
+            subscription_plan: planId as PlanId,
+            subscription_end_date: subscriptionEnd.toISOString(),
+            credits: plan.credits,
+          }).eq("id", userId)
+        } else if (credits) {
+          const { data: user } = await supabase
+            .from("users")
+            .select("credits")
+            .eq("id", userId)
+            .single()
+
+          await supabase.from("users").update({
+            stripe_customer_id: session.customer as string,
+            credits: (user?.credits || 0) + parseInt(credits),
+          }).eq("id", userId)
         }
-
-        const subscriptionEnd = new Date()
-        subscriptionEnd.setMonth(subscriptionEnd.getMonth() + 1)
-
-        await supabase.from("users").update({
-          stripe_customer_id: session.customer as string,
-          subscription_status: "active",
-          subscription_plan: planId as PlanId,
-          subscription_end_date: subscriptionEnd.toISOString(),
-          credits: plan.credits,
-        }).eq("id", userId)
 
         break
       }

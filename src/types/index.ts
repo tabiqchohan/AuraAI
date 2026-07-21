@@ -120,3 +120,12 @@ export interface SavedPrompt {
   type: GenerationType
   created_at: string
 }
+
+export type Currency = "USD" | "PKR"
+
+export interface PurchaseRequest {
+  type: "subscription" | "credits"
+  planId?: PlanId
+  packId?: string
+  currency: Currency
+}

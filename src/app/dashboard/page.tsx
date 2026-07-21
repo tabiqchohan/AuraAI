@@ -7,6 +7,7 @@ import { CreditBalance } from "@/components/dashboard/CreditBalance"
 import { GenerationForm } from "@/components/dashboard/GenerationForm"
 import { GenerationGrid } from "@/components/dashboard/GenerationGrid"
 import { VideoStudio } from "@/components/dashboard/VideoStudio"
+import { CreditPacks } from "@/components/dashboard/CreditPacks"
 import { Separator } from "@/components/ui/separator"
 
 export default function DashboardPage() {
@@ -67,8 +68,9 @@ export default function DashboardPage() {
         </div>
 
         <div className="space-y-6">
-          <div className="lg:sticky lg:top-8">
+          <div className="lg:sticky lg:top-8 space-y-6">
             <CreditBalance />
+            <CreditPacks />
           </div>
         </div>
       </div>

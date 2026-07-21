@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/server"
 import { createAdminClient } from "@/lib/supabase/admin"
-import { generateImage, generateVideo } from "@/lib/replicate"
+import { generateImage, generateVideo, upscaleImage, generateVoiceover } from "@/lib/replicate"
 import { CREDITS_PER_GENERATION } from "@/lib/constants"
 import { v4 as uuidv4 } from "uuid"
 
@@ -15,7 +15,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json()
-    const { prompt, type, model, width, height, negative_prompt, seed, batch_count, duration, aspect_ratio } = body
+    const { prompt, type, model, width, height, negative_prompt, seed, batch_count, duration, aspect_ratio, upscale, removeBg, voiceover } = body
 
     if (!prompt || !type) {
       return NextResponse.json({ error: "Missing required fields: prompt, type" }, { status: 400 })
@@ -27,7 +27,11 @@ export async function POST(request: Request) {
 
     const batchSize = Math.min(Math.max(batch_count || 1, 1), 4)
     const creditsPerGen = CREDITS_PER_GENERATION[type as keyof typeof CREDITS_PER_GENERATION] || 5
-    const totalCreditsNeeded = creditsPerGen * batchSize
+    let addonCredits = 0
+    if (upscale) addonCredits += CREDITS_PER_GENERATION.upscale * batchSize
+    if (removeBg) addonCredits += CREDITS_PER_GENERATION.removeBg * batchSize
+    if (voiceover) addonCredits += CREDITS_PER_GENERATION.voiceover
+    const totalCreditsNeeded = (creditsPerGen * batchSize) + addonCredits
 
     const { data: profile } = await supabase
       .from("users")
@@ -73,7 +77,7 @@ export async function POST(request: Request) {
         width: width || null,
         height: height || null,
         seed: seed || null,
-        credits_used: creditsPerGen,
+        credits_used: creditsPerGen + (addonCredits / batchSize),
         is_public: true,
         likes_count: 0,
         output_url: "",
@@ -83,10 +87,23 @@ export async function POST(request: Request) {
       generationIds.push(generationId)
 
       const handleOutput = async (output: unknown) => {
-        const urls = Array.isArray(output) ? output : [String(output)]
+        let url = Array.isArray(output) ? output[0] : String(output)
+        if (upscale && type === "image") {
+          try { url = String(await upscaleImage(url)) } catch {}
+        }
+        if (removeBg && type === "image") {
+          try {
+            const sb2 = createAdminClient()
+            const bgResult = await sb2.rpc("remove_background", { image_url: url })
+            if (bgResult.data) url = bgResult.data
+          } catch {}
+        }
+        if (voiceover && type === "video") {
+          try { const audioUrl = await generateVoiceover(prompt); url += `?audio=${encodeURIComponent(audioUrl)}` } catch {}
+        }
         await supabase
           .from("generations")
-          .update({ status: "completed", output_url: urls[0], output_urls: urls })
+          .update({ status: "completed", output_url: url, output_urls: [url] })
           .eq("id", generationId)
       }
 
