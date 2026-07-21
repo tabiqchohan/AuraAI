@@ -100,6 +100,7 @@ function PremiumCard({ children, className = "", gradient = false }: { children:
 export default function AdminPageContent() {
   const { user, loading: userLoading } = useUser()
   const router = useRouter()
+  const [activeTab, setActiveTab] = useState<TabId>("overview")
 
   useEffect(() => {
     if (!userLoading && (!user || !user.is_admin)) router.push("/dashboard")
@@ -115,8 +116,6 @@ export default function AdminPageContent() {
       </div>
     )
   }
-
-  const [activeTab, setActiveTab] = useState<TabId>("overview")
 
   return (
     <div className="min-h-screen bg-[#0a0a0f]">
