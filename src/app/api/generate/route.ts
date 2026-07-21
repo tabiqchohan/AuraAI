@@ -15,7 +15,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json()
-    const { prompt, type, model, width, height, negative_prompt, seed, batch_count } = body
+    const { prompt, type, model, width, height, negative_prompt, seed, batch_count, duration, aspect_ratio } = body
 
     if (!prompt || !type) {
       return NextResponse.json({ error: "Missing required fields: prompt, type" }, { status: 400 })
@@ -102,7 +102,7 @@ export async function POST(request: Request) {
           .then(handleOutput)
           .catch(handleError)
       } else {
-        generateVideo(prompt, { model })
+        generateVideo(prompt, { model, duration, aspect_ratio })
           .then(handleOutput)
           .catch(handleError)
       }

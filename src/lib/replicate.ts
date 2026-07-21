@@ -14,7 +14,74 @@ export async function generateImage(prompt: string, options?: { model?: string; 
   return replicate.run(model as `${string}/${string}`, { input })
 }
 
-export async function generateVideo(prompt: string, options?: { model?: string }) {
+export async function generateVideo(prompt: string, options?: { model?: string; duration?: number; aspect_ratio?: string }) {
   const model = options?.model || "luma/ray"
-  return replicate.run(model as `${string}/${string}`, { input: { prompt } })
+  if (model.startsWith("kling")) {
+    return generateKlingVideo(prompt, options)
+  }
+  const input: Record<string, unknown> = { prompt }
+  if (options?.duration) input.duration = options.duration
+  if (options?.aspect_ratio) input.aspect_ratio = options.aspect_ratio
+  return replicate.run(model as `${string}/${string}`, { input })
+}
+
+async function getKlingAuth() {
+  const apiKey = process.env.KLING_AI_API_KEY
+  const secretKey = process.env.KLING_AI_SECRET_KEY
+  if (!apiKey || !secretKey) throw new Error("Kling AI API key and secret key are required")
+  const timestamp = Math.floor(Date.now() / 1000)
+  const message = `${apiKey}:${timestamp}`
+  const enc = new TextEncoder()
+  const keyData = await crypto.subtle.importKey("raw", enc.encode(secretKey), { name: "HMAC", hash: "SHA-256" }, false, ["sign"])
+  const signature = await crypto.subtle.sign("HMAC", keyData, enc.encode(message))
+  const sigHex = Array.from(new Uint8Array(signature)).map(b => b.toString(16).padStart(2, "0")).join("")
+  const token = Buffer.from(`${apiKey}:${sigHex}:${timestamp}`).toString("base64")
+  return token
+}
+
+async function klingFetch(url: string, options?: RequestInit): Promise<any> {
+  const token = await getKlingAuth()
+  const res = await fetch(url, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`,
+      ...options?.headers,
+    },
+  })
+  if (!res.ok) throw new Error(`Kling AI error: ${await res.text()}`)
+  const result = await res.json()
+  if (result.code !== 0) throw new Error(`Kling AI error: ${result.message}`)
+  return result
+}
+
+async function generateKlingVideo(prompt: string, options?: { model?: string; duration?: number; aspect_ratio?: string }) {
+  const model = options?.model || "kling-v1.5"
+  const duration = options?.duration || 5
+  const aspectRatio = options?.aspect_ratio || "16:9"
+
+  const result = await klingFetch("https://api.klingai.com/v1/videos/text2video", {
+    method: "POST",
+    body: JSON.stringify({
+      model_name: model,
+      prompt,
+      duration,
+      aspect_ratio: aspectRatio,
+      mode: duration > 10 ? "pro" : "std",
+    }),
+  })
+
+  const taskId = result.data.task_id
+  return pollKlingResult(taskId)
+}
+
+async function pollKlingResult(taskId: string): Promise<string> {
+  for (let i = 0; i < 120; i++) {
+    await new Promise((r) => setTimeout(r, 3000))
+    const result = await klingFetch(`https://api.klingai.com/v1/videos/text2video/${taskId}`)
+    const task = result.data
+    if (task.status === "succeed") return task.video?.url || task.videos?.[0]?.url || ""
+    if (task.status === "failed") throw new Error(`Kling AI generation failed: ${task.message || "Unknown error"}`)
+  }
+  throw new Error("Kling AI generation timed out")
 }

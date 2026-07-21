@@ -30,7 +30,7 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs"
 import { cn, formatCredits } from "@/lib/utils"
-import { IMAGE_MODELS, VIDEO_MODELS, ASPECT_RATIOS, STYLES, CREDITS_PER_GENERATION } from "@/lib/constants"
+import { IMAGE_MODELS, VIDEO_MODELS, ASPECT_RATIOS, STYLES, CREDITS_PER_GENERATION, VIDEO_DURATION_OPTIONS } from "@/lib/constants"
 import { useCredits } from "@/hooks/useCredits"
 import { toast } from "sonner"
 import type { GenerationType } from "@/types"
@@ -48,8 +48,10 @@ export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
   const [width, setWidth] = useState(1024)
   const [height, setHeight] = useState(1024)
   const [isGenerating, setIsGenerating] = useState(false)
+  const [duration, setDuration] = useState(5)
 
   const models = type === "image" ? IMAGE_MODELS : VIDEO_MODELS
+  const isKling = model.startsWith("kling")
   const creditCost = CREDITS_PER_GENERATION[type] * batchCount
   const canGenerate = prompt.trim().length > 0 && hasEnoughCredits(type) && !isGenerating
   const selectedRatio = ASPECT_RATIOS.find((r) => r.value === aspectRatio)
@@ -58,7 +60,9 @@ export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
   const handleTypeChange = (value: string) => {
     const newType = value as GenerationType
     setType(newType)
-    setModel(newType === "image" ? IMAGE_MODELS[0].id : VIDEO_MODELS[0].id)
+    const newModel = newType === "image" ? IMAGE_MODELS[0].id : VIDEO_MODELS[0].id
+    setModel(newModel)
+    setDuration(5)
   }
 
   const handleAspectRatioChange = (value: string) => {
@@ -95,6 +99,8 @@ export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
           width: isCustom ? width : selectedRatio?.width,
           height: isCustom ? height : selectedRatio?.height,
           batchCount,
+          duration: isKling ? duration : undefined,
+          aspect_ratio: isKling ? aspectRatio : undefined,
         }),
       })
 
@@ -301,6 +307,29 @@ export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
             ))}
           </div>
         </div>
+
+        {isKling && (
+          <div className="space-y-2">
+            <Label>Duration</Label>
+            <div className="flex gap-2">
+              {VIDEO_DURATION_OPTIONS.map((opt) => (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => setDuration(opt.value)}
+                  className={cn(
+                    "flex-1 rounded-lg border py-2 text-sm font-medium transition-all duration-200",
+                    duration === opt.value
+                      ? "border-purple-600 bg-purple-600/10 text-purple-300"
+                      : "border-zinc-700 bg-zinc-900 text-zinc-400 hover:border-zinc-600 hover:text-zinc-300"
+                  )}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="flex flex-col gap-3 pt-2">
           <Button
