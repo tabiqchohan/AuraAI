@@ -27,16 +27,8 @@ export async function generateVideo(prompt: string, options?: { model?: string; 
 
 async function getKlingAuth() {
   const apiKey = process.env.KLING_AI_API_KEY
-  const secretKey = process.env.KLING_AI_SECRET_KEY
-  if (!apiKey || !secretKey) throw new Error("Kling AI API key and secret key are required")
-  const timestamp = Math.floor(Date.now() / 1000)
-  const message = `${apiKey}:${timestamp}`
-  const enc = new TextEncoder()
-  const keyData = await crypto.subtle.importKey("raw", enc.encode(secretKey), { name: "HMAC", hash: "SHA-256" }, false, ["sign"])
-  const signature = await crypto.subtle.sign("HMAC", keyData, enc.encode(message))
-  const sigHex = Array.from(new Uint8Array(signature)).map(b => b.toString(16).padStart(2, "0")).join("")
-  const token = Buffer.from(`${apiKey}:${sigHex}:${timestamp}`).toString("base64")
-  return token
+  if (!apiKey) throw new Error("Kling AI API key is required")
+  return apiKey
 }
 
 async function klingFetch(url: string, options?: RequestInit): Promise<any> {
