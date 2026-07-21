@@ -1,4 +1,4 @@
-import type { SubscriptionPlan } from "@/types"
+import type { SubscriptionPlan, GenerationType } from "@/types"
 import type { PlanId } from "@/types"
 
 export const PLANS: SubscriptionPlan[] = [
@@ -103,3 +103,27 @@ export const STYLES = [
 export const FREE_CREDITS_ON_SIGNUP = 100
 export const REFERRAL_CREDITS = 20
 export const MAX_FREE_GENERATIONS = 100
+
+export interface Template {
+  id: string
+  name: string
+  description: string
+  type: GenerationType
+  model: string
+  style: string
+  aspectRatio: string
+  examplePrompt: string
+  emoji: string
+}
+
+export const TEMPLATES: Template[] = [
+  { id: "cinematic-landscape", name: "Cinematic Landscape", description: "Epic wide shots", type: "image", model: "black-forest-labs/flux-dev", style: "cinematic", aspectRatio: "16:9", examplePrompt: "A breathtaking cinematic landscape of misty mountains at golden hour with dramatic clouds", emoji: "🏔️" },
+  { id: "portrait-photo", name: "Portrait Photo", description: "Realistic portraits", type: "image", model: "black-forest-labs/flux-dev", style: "photorealistic", aspectRatio: "4:5", examplePrompt: "A professional headshot of a confident woman with soft natural lighting", emoji: "👤" },
+  { id: "anime-scene", name: "Anime Scene", description: "Japanese anime style", type: "image", model: "black-forest-labs/flux-schnell", style: "anime", aspectRatio: "16:9", examplePrompt: "Anime style scene of a sunset over Tokyo with cherry blossom trees", emoji: "🌸" },
+  { id: "fantasy-art", name: "Fantasy Art", description: "Magical illustrations", type: "image", model: "stability-ai/stable-diffusion-3", style: "fantasy", aspectRatio: "1:1", examplePrompt: "A fantasy illustration of a glowing crystal cave with floating magical particles", emoji: "🧙" },
+  { id: "cyberpunk-city", name: "Cyberpunk City", description: "Neon futuristic", type: "image", model: "black-forest-labs/flux-dev", style: "cyberpunk", aspectRatio: "9:16", examplePrompt: "A cyberpunk city street at night with neon signs reflecting on wet pavement", emoji: "🌃" },
+  { id: "product-ad", name: "Product Ad", description: "Clean product shots", type: "image", model: "stability-ai/stable-diffusion-3", style: "3d-render", aspectRatio: "1:1", examplePrompt: "A 3D render of a premium perfume bottle with golden accents on marble surface", emoji: "📦" },
+  { id: "nature-video", name: "Nature Video", description: "Scenic nature clips", type: "video", model: "pixverse/pixverse-v6", style: "cinematic", aspectRatio: "16:9", examplePrompt: "A serene waterfall in a lush green forest with sunlight streaming through trees", emoji: "🌿" },
+  { id: "product-showcase", name: "Product Showcase", description: "Dynamic product video", type: "video", model: "bytedance/seedance-1-pro", style: "cinematic", aspectRatio: "1:1", examplePrompt: "A luxury watch rotating on a dark reflective surface with subtle lighting", emoji: "⌚" },
+  { id: "urban-clip", name: "Urban Clip", description: "City lifestyle videos", type: "video", model: "pixverse/pixverse-v6", style: "cinematic", aspectRatio: "9:16", examplePrompt: "Time-lapse of a busy city intersection at night with car light trails", emoji: "🏙️" },
+]

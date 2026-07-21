@@ -30,10 +30,11 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs"
 import { cn, formatCredits } from "@/lib/utils"
-import { IMAGE_MODELS, VIDEO_MODELS, ASPECT_RATIOS, STYLES, CREDITS_PER_GENERATION, VIDEO_DURATION_OPTIONS } from "@/lib/constants"
+import { IMAGE_MODELS, VIDEO_MODELS, ASPECT_RATIOS, STYLES, CREDITS_PER_GENERATION, VIDEO_DURATION_OPTIONS, type Template } from "@/lib/constants"
 import { useCredits } from "@/hooks/useCredits"
 import { toast } from "sonner"
 import type { GenerationType } from "@/types"
+import { TemplatesGallery } from "./TemplatesGallery"
 
 export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
   const { credits, hasEnoughCredits, deductCredits } = useCredits()
@@ -55,6 +56,17 @@ export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
   const canGenerate = prompt.trim().length > 0 && hasEnoughCredits(type) && !isGenerating
   const selectedRatio = ASPECT_RATIOS.find((r) => r.value === aspectRatio)
   const isCustom = aspectRatio === "custom"
+
+  const handleTemplateSelect = (template: Template) => {
+    setType(template.type)
+    setModel(template.model)
+    setStyle(template.style)
+    setAspectRatio(template.aspectRatio)
+    setPrompt(template.examplePrompt)
+    const ratio = ASPECT_RATIOS.find((r) => r.value === template.aspectRatio)
+    if (ratio) { setWidth(ratio.width); setHeight(ratio.height) }
+    setDuration(10)
+  }
 
   const handleTypeChange = (value: string) => {
     const newType = value as GenerationType
@@ -189,6 +201,8 @@ export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
             )}
           </AnimatePresence>
         </div>
+
+        <TemplatesGallery onSelect={handleTemplateSelect} />
 
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
