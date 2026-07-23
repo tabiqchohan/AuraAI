@@ -41,13 +41,16 @@ export function TemplatesGallery({ onSelect }: TemplatesGalleryProps) {
       <button
         type="button"
         onClick={() => setCollapsed(!collapsed)}
-        className="flex items-center justify-between w-full mb-3"
+        className="flex items-center justify-between w-full mb-3 group"
       >
         <h3 className="text-sm font-medium text-zinc-400 uppercase tracking-wider flex items-center gap-2">
           <Sparkles className="h-3.5 w-3.5 text-purple-400" />
           Templates
+          <span className="text-[10px] text-zinc-600 font-normal normal-case">({filtered.length})</span>
         </h3>
-        {collapsed ? <ChevronDown className="h-4 w-4 text-zinc-600" /> : <ChevronUp className="h-4 w-4 text-zinc-600" />}
+        <div className={`p-0.5 rounded transition-all duration-300 ${!collapsed ? "bg-purple-600/20 text-purple-400" : "text-zinc-600 group-hover:text-zinc-400"}`}>
+          {collapsed ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
+        </div>
       </button>
 
       <AnimatePresence>
@@ -56,14 +59,15 @@ export function TemplatesGallery({ onSelect }: TemplatesGalleryProps) {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25 }}
             className="overflow-hidden space-y-3"
           >
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-1.5">
               <button
                 type="button"
                 onClick={() => setFilter("all")}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                  filter === "all" ? "bg-purple-600/20 text-purple-300 border border-purple-500/30" : "bg-zinc-800/50 text-zinc-500 hover:text-zinc-300 border border-transparent"
+                  filter === "all" ? "bg-gradient-to-r from-purple-600/20 to-pink-600/20 text-purple-200 border border-purple-500/30 shadow-sm" : "bg-zinc-800/50 text-zinc-500 hover:text-zinc-300 border border-transparent"
                 }`}
               >
                 All
@@ -72,7 +76,7 @@ export function TemplatesGallery({ onSelect }: TemplatesGalleryProps) {
                 type="button"
                 onClick={() => setFilter("image")}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all ${
-                  filter === "image" ? "bg-purple-600/20 text-purple-300 border border-purple-500/30" : "bg-zinc-800/50 text-zinc-500 hover:text-zinc-300 border border-transparent"
+                  filter === "image" ? "bg-gradient-to-r from-purple-600/20 to-pink-600/20 text-purple-200 border border-purple-500/30 shadow-sm" : "bg-zinc-800/50 text-zinc-500 hover:text-zinc-300 border border-transparent"
                 }`}
               >
                 <ImageIcon className="h-3 w-3" /> Images
@@ -81,7 +85,7 @@ export function TemplatesGallery({ onSelect }: TemplatesGalleryProps) {
                 type="button"
                 onClick={() => setFilter("video")}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all ${
-                  filter === "video" ? "bg-purple-600/20 text-purple-300 border border-purple-500/30" : "bg-zinc-800/50 text-zinc-500 hover:text-zinc-300 border border-transparent"
+                  filter === "video" ? "bg-gradient-to-r from-purple-600/20 to-pink-600/20 text-purple-200 border border-purple-500/30 shadow-sm" : "bg-zinc-800/50 text-zinc-500 hover:text-zinc-300 border border-transparent"
                 }`}
               >
                 <VideoIcon className="h-3 w-3" /> Videos
@@ -90,7 +94,7 @@ export function TemplatesGallery({ onSelect }: TemplatesGalleryProps) {
                 type="button"
                 onClick={() => setShowPremium(!showPremium)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all ${
-                  showPremium ? "bg-amber-600/20 text-amber-300 border border-amber-500/30" : "bg-zinc-800/50 text-zinc-500 hover:text-zinc-300 border border-transparent"
+                  showPremium ? "bg-gradient-to-r from-amber-600/20 to-orange-600/20 text-amber-200 border border-amber-500/30 shadow-sm" : "bg-zinc-800/50 text-zinc-500 hover:text-zinc-300 border border-transparent"
                 }`}
               >
                 <Crown className="h-3 w-3" /> Premium
@@ -98,12 +102,12 @@ export function TemplatesGallery({ onSelect }: TemplatesGalleryProps) {
             </div>
 
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-zinc-600" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-zinc-500" />
               <Input
                 placeholder="Search templates..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="h-9 pl-9 text-xs bg-zinc-900/50 border-zinc-800 rounded-xl placeholder:text-zinc-600"
+                className="h-9 pl-9 text-xs bg-zinc-900/50 border-zinc-800/50 rounded-xl placeholder:text-zinc-600 focus:border-purple-500/30 focus:ring-1 focus:ring-purple-500/20 transition-all"
               />
             </div>
 
@@ -116,15 +120,15 @@ export function TemplatesGallery({ onSelect }: TemplatesGalleryProps) {
                   transition={{ delay: i * 0.03 }}
                   type="button"
                   onClick={() => handleSelect(template)}
-                  className={`flex flex-col items-start gap-1.5 p-3 rounded-xl border transition-all text-left group relative ${
+                  className={`flex flex-col items-start gap-1.5 p-3 rounded-xl border transition-all duration-300 text-left group relative ${
                     template.premium
-                      ? "bg-gradient-to-br from-amber-900/10 to-amber-950/10 border-amber-500/20 hover:border-amber-500/40"
-                      : "bg-zinc-900/50 border-zinc-800/50 hover:border-purple-500/30 hover:bg-zinc-800/50"
+                      ? "bg-gradient-to-br from-amber-900/15 to-amber-950/10 border-amber-500/20 hover:border-amber-500/40 hover:shadow-lg hover:shadow-amber-600/10"
+                      : "bg-zinc-900/50 border-zinc-800/50 hover:border-purple-500/30 hover:bg-zinc-800/50 hover:shadow-lg hover:shadow-purple-600/5"
                   }`}
                 >
                   {template.premium && !isPremium && (
-                    <div className="absolute inset-0 rounded-xl bg-zinc-900/60 backdrop-blur-[1px] flex items-center justify-center z-10 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <span className="flex items-center gap-1.5 text-amber-400 text-xs font-medium">
+                    <div className="absolute inset-0 rounded-xl bg-zinc-900/70 backdrop-blur-[2px] flex items-center justify-center z-10 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                      <span className="flex items-center gap-1.5 text-amber-400 text-xs font-medium bg-zinc-900/80 px-3 py-1.5 rounded-lg border border-amber-500/20">
                         <Lock className="h-3 w-3" /> Upgrade to access
                       </span>
                     </div>
@@ -133,7 +137,7 @@ export function TemplatesGallery({ onSelect }: TemplatesGalleryProps) {
                     <span className="text-lg">{template.emoji}</span>
                     <span className="text-xs font-medium text-zinc-300 truncate flex-1">{template.name}</span>
                     {template.premium && (
-                      <span className="flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-amber-500/10 text-amber-400 text-[9px] font-medium border border-amber-500/20">
+                      <span className="flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-gradient-to-r from-amber-500/15 to-orange-500/15 text-amber-400 text-[9px] font-medium border border-amber-500/20">
                         <Crown className="h-2.5 w-2.5" /> Pro
                       </span>
                     )}

@@ -112,17 +112,17 @@ export function GenerationGrid({
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between rounded-xl bg-zinc-900/40 border border-zinc-800/50 p-1.5">
         {!isExternal && (
           <Tabs value={activeFilter} onValueChange={setInternalFilter}>
-            <TabsList>
-              <TabsTrigger value="all" className="gap-1.5">
+            <TabsList className="bg-transparent border-0 gap-1">
+              <TabsTrigger value="all" className="gap-1.5 data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600/20 data-[state=active]:to-pink-600/20 data-[state=active]:text-purple-200 rounded-lg px-3 py-1.5">
                 All
               </TabsTrigger>
-              <TabsTrigger value="image" className="gap-1.5">
+              <TabsTrigger value="image" className="gap-1.5 data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600/20 data-[state=active]:to-pink-600/20 data-[state=active]:text-purple-200 rounded-lg px-3 py-1.5">
                 <ImageIcon className="h-3.5 w-3.5" /> Images
               </TabsTrigger>
-              <TabsTrigger value="video" className="gap-1.5">
+              <TabsTrigger value="video" className="gap-1.5 data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600/20 data-[state=active]:to-pink-600/20 data-[state=active]:text-purple-200 rounded-lg px-3 py-1.5">
                 <VideoIcon className="h-3.5 w-3.5" /> Videos
               </TabsTrigger>
             </TabsList>
@@ -131,7 +131,7 @@ export function GenerationGrid({
         <Button
           variant="outline"
           size="sm"
-          className="gap-2"
+          className="gap-2 border-zinc-800 bg-zinc-900/50 hover:bg-zinc-800 hover:text-zinc-200 rounded-lg"
           onClick={() => setSort(sort === "date" ? "popularity" : "date")}
         >
           <ArrowUpDown className="h-3.5 w-3.5" />

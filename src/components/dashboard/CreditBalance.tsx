@@ -52,47 +52,58 @@ export function CreditBalance() {
   }
 
   return (
-    <Card className="relative overflow-hidden border-zinc-800/50 bg-gradient-to-br from-zinc-900/80 to-zinc-950/80">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-purple-900/10 via-transparent to-transparent" />
+    <Card className="relative overflow-hidden border-purple-500/10 bg-gradient-to-br from-zinc-900/80 to-zinc-950/80 shadow-xl shadow-purple-600/5">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-purple-600/15 via-transparent to-transparent" />
+      <div className="pointer-events-none absolute -top-20 -right-20 h-40 w-40 rounded-full bg-purple-600/10 blur-3xl" />
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-lg font-semibold">
-          <Coins className="h-5 w-5 text-purple-400" />
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-purple-600 to-pink-600 shadow-lg shadow-purple-600/30">
+            <Coins className="h-4 w-4 text-white" />
+          </div>
           Credit Balance
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="flex items-baseline gap-1">
+      <CardContent className="relative z-10 space-y-4">
+        <div className="flex items-baseline gap-2">
           <motion.span
             key={credits}
             initial={{ scale: 1.2, opacity: 0.5 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="text-4xl font-bold tracking-tight text-zinc-100"
+            className="text-5xl font-bold tracking-tight text-gradient"
           >
             <AnimatedCounter value={credits} />
           </motion.span>
-          <span className="text-sm text-zinc-500">credits</span>
+          <span className="text-sm text-zinc-500">credits available</span>
         </div>
 
         <div className="space-y-1.5">
-          <div className="flex items-center justify-between text-xs text-zinc-500">
-            <span>Usage</span>
-            <span>{usagePercent}%</span>
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-zinc-500">Usage</span>
+            <span className="text-zinc-400">{usagePercent}%</span>
           </div>
-          <Progress value={usagePercent} className="h-2" />
+          <Progress
+            value={usagePercent}
+            className="h-2 bg-zinc-800 [&>div]:bg-gradient-to-r [&>div]:from-purple-600 [&>div]:to-pink-600"
+          />
         </div>
 
-        <div className="flex items-center gap-2 rounded-lg bg-zinc-800/50 p-3 text-xs text-zinc-400">
-          <Zap className="h-4 w-4 text-yellow-500 shrink-0" />
-          <span>
-            Each image generation costs <span className="text-purple-400 font-medium">5</span> credits, videos cost{" "}
-            <span className="text-purple-400 font-medium">20</span> credits
-          </span>
+        <div className="flex items-center gap-2.5 rounded-xl bg-gradient-to-r from-zinc-800/80 to-zinc-900/80 border border-zinc-700/30 p-3.5 text-xs">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-yellow-500/10">
+            <Zap className="h-4 w-4 text-yellow-500" />
+          </div>
+          <div className="text-zinc-400 leading-relaxed">
+            Each image costs <span className="text-purple-400 font-semibold">5</span> credits, videos cost{" "}
+            <span className="text-purple-400 font-semibold">20</span> credits
+          </div>
         </div>
 
         <Link href="/pricing">
-          <Button variant="premium" className="w-full gap-2" size="lg">
+          <Button
+            className="w-full gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 shadow-lg shadow-purple-600/30 hover:shadow-purple-600/40 transition-all duration-300"
+            size="lg"
+          >
             <Sparkles className="h-4 w-4" />
-            Buy Credits
+            Get More Credits
           </Button>
         </Link>
       </CardContent>

@@ -1,13 +1,10 @@
 import Link from "next/link"
-import { Navbar } from "@/components/layout/Navbar"
-import { Footer } from "@/components/layout/Footer"
 import { Button } from "@/components/ui/button"
 import { CheckCircle } from "lucide-react"
 
 export default function SuccessPage() {
   return (
-    <div className="min-h-screen bg-black flex flex-col">
-      <Navbar />
+    <div className="min-h-screen bg-[#0f0f1a] flex flex-col">
       <main className="flex-1 flex items-center justify-center px-4">
         <div className="max-w-md mx-auto text-center">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-500/10 mb-6">
@@ -30,7 +27,6 @@ export default function SuccessPage() {
           </div>
         </div>
       </main>
-      <Footer />
     </div>
   )
 }

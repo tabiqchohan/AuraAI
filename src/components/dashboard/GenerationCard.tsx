@@ -72,7 +72,7 @@ export function GenerationCard({ generation, onDelete, onLike, onDownload, onSha
       transition={{ duration: 0.3 }}
       layout
     >
-      <Card className="group overflow-hidden border-zinc-800/50 bg-zinc-900/40 hover:border-zinc-700/50 transition-all duration-300">
+      <Card className="group relative overflow-hidden border-zinc-800/50 bg-zinc-900/40 hover:border-purple-500/30 transition-all duration-500 hover:shadow-xl hover:shadow-purple-600/10">
         <div className="relative aspect-square overflow-hidden bg-zinc-950">
           {previewUrl && !imageError ? (
             <>
@@ -82,7 +82,7 @@ export function GenerationCard({ generation, onDelete, onLike, onDownload, onSha
                   alt={generation.prompt}
                   fill
                   className={cn(
-                    "object-cover transition-all duration-500 group-hover:scale-105",
+                    "object-cover transition-all duration-700 group-hover:scale-110",
                     imageLoaded ? "opacity-100" : "opacity-0"
                   )}
                   onLoad={() => setImageLoaded(true)}
@@ -108,7 +108,7 @@ export function GenerationCard({ generation, onDelete, onLike, onDownload, onSha
               )}
             </>
           ) : (
-            <div className="flex h-full items-center justify-center">
+            <div className="flex h-full items-center justify-center bg-gradient-to-br from-zinc-900 to-zinc-950">
               {isImage ? (
                 <ImageIcon className="h-12 w-12 text-zinc-700" />
               ) : (
@@ -116,24 +116,23 @@ export function GenerationCard({ generation, onDelete, onLike, onDownload, onSha
               )}
             </div>
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-          <div className="absolute top-2 left-2 flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <Badge variant={isImage ? "default" : "secondary"} className="text-[10px] px-1.5 py-0">
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          <div className="absolute top-2 left-2 flex gap-1.5 opacity-0 group-hover:opacity-100 transition-all duration-500 -translate-y-1 group-hover:translate-y-0">
+            <Badge variant={isImage ? "default" : "secondary"} className="text-[10px] px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-sm border-0">
               {isImage ? <ImageIcon className="h-3 w-3 mr-1" /> : <VideoIcon className="h-3 w-3 mr-1" />}
               {isImage ? "Image" : "Video"}
             </Badge>
           </div>
-          <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <Badge variant={status.variant} className="text-[10px] px-1.5 py-0">
+          <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-all duration-500 -translate-y-1 group-hover:translate-y-0">
+            <Badge variant={status.variant} className="text-[10px] px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-sm border-0 shadow-lg">
               {status.icon}
               <span className="ml-1">{status.label}</span>
             </Badge>
           </div>
-          <div className="absolute bottom-2 left-2 right-2 flex justify-center gap-1 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+          <div className="absolute inset-x-0 bottom-0 flex justify-center gap-1.5 p-3 opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500">
             <Button
               size="icon"
-              variant="ghost"
-              className="h-8 w-8 rounded-full bg-black/50 hover:bg-black/70 text-zinc-200"
+              className="h-9 w-9 rounded-full bg-white/10 backdrop-blur-md hover:bg-white/20 border border-white/10 text-zinc-200 shadow-lg"
               onClick={handleDownload}
               disabled={generation.status !== "completed"}
               title="Download"
@@ -142,9 +141,8 @@ export function GenerationCard({ generation, onDelete, onLike, onDownload, onSha
             </Button>
             <Button
               size="icon"
-              variant="ghost"
               className={cn(
-                "h-8 w-8 rounded-full bg-black/50 hover:bg-black/70",
+                "h-9 w-9 rounded-full bg-white/10 backdrop-blur-md hover:bg-white/20 border border-white/10 shadow-lg",
                 liked ? "text-red-400" : "text-zinc-200"
               )}
               onClick={handleLike}
@@ -155,8 +153,7 @@ export function GenerationCard({ generation, onDelete, onLike, onDownload, onSha
             </Button>
             <Button
               size="icon"
-              variant="ghost"
-              className="h-8 w-8 rounded-full bg-black/50 hover:bg-black/70 text-zinc-200"
+              className="h-9 w-9 rounded-full bg-white/10 backdrop-blur-md hover:bg-white/20 border border-white/10 text-zinc-200 shadow-lg"
               onClick={handleShare}
               disabled={generation.status !== "completed"}
               title="Share"
@@ -165,8 +162,7 @@ export function GenerationCard({ generation, onDelete, onLike, onDownload, onSha
             </Button>
             <Button
               size="icon"
-              variant="ghost"
-              className="h-8 w-8 rounded-full bg-black/50 hover:bg-black/70 text-red-400 hover:text-red-300"
+              className="h-9 w-9 rounded-full bg-white/10 backdrop-blur-md hover:bg-white/20 border border-white/10 text-red-400 hover:text-red-300 shadow-lg"
               onClick={handleDelete}
               title="Delete"
             >
@@ -174,13 +170,13 @@ export function GenerationCard({ generation, onDelete, onLike, onDownload, onSha
             </Button>
           </div>
         </div>
-        <CardContent className="p-3 space-y-2">
-          <p className="text-sm text-zinc-300 line-clamp-2 leading-snug">{generation.prompt}</p>
-          <div className="flex items-center justify-between text-xs text-zinc-500">
-            <span>{formatDate(generation.created_at)}</span>
-            <span className="flex items-center gap-1">
-              <span className="text-purple-400 font-medium">{formatCredits(generation.credits_used)}</span>
-              credits
+        <CardContent className="p-3.5 space-y-2">
+          <p className="text-sm text-zinc-300 line-clamp-2 leading-snug group-hover:text-zinc-200 transition-colors">{generation.prompt}</p>
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-zinc-500">{formatDate(generation.created_at)}</span>
+            <span className="flex items-center gap-1 rounded-md bg-purple-600/10 px-2 py-0.5">
+              <span className="text-purple-400 font-semibold">{formatCredits(generation.credits_used)}</span>
+              <span className="text-purple-400/70">credits</span>
             </span>
           </div>
         </CardContent>

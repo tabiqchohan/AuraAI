@@ -35,21 +35,24 @@ export function CreditPacks() {
   }
 
   return (
-    <Card className="border-zinc-800/50 bg-zinc-900/40">
+    <Card className="relative overflow-hidden border-purple-500/10 bg-zinc-900/40 shadow-xl shadow-purple-600/5">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-pink-600/5 via-transparent to-transparent" />
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-xl">
-          <Zap className="h-5 w-5 text-yellow-400" />
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-yellow-500 to-orange-500 shadow-lg shadow-yellow-600/30">
+            <Zap className="h-4 w-4 text-white" />
+          </div>
           Buy Credits
         </CardTitle>
         <CardDescription>One-time credit packs, no subscription needed</CardDescription>
       </CardHeader>
-      <CardContent className="space-y-3">
-        <div className="flex gap-1 p-1 bg-zinc-800/50 rounded-xl w-fit">
+      <CardContent className="relative z-10 space-y-3">
+        <div className="flex gap-1 p-1 bg-zinc-800/50 rounded-xl w-fit border border-zinc-700/30">
           <button
             type="button"
             onClick={() => setCurrency("USD")}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-              currency === "USD" ? "bg-purple-600/20 text-purple-300" : "text-zinc-500 hover:text-zinc-300"
+              currency === "USD" ? "bg-gradient-to-r from-purple-600/30 to-pink-600/30 text-purple-200 shadow-sm" : "text-zinc-500 hover:text-zinc-300"
             }`}
           >
             USD $
@@ -58,7 +61,7 @@ export function CreditPacks() {
             type="button"
             onClick={() => setCurrency("PKR")}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-              currency === "PKR" ? "bg-purple-600/20 text-purple-300" : "text-zinc-500 hover:text-zinc-300"
+              currency === "PKR" ? "bg-gradient-to-r from-purple-600/30 to-pink-600/30 text-purple-200 shadow-sm" : "text-zinc-500 hover:text-zinc-300"
             }`}
           >
             PKR ₹
@@ -74,27 +77,28 @@ export function CreditPacks() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
-              className={`relative p-4 rounded-xl border transition-all ${
+              className={`relative p-4 rounded-xl border transition-all duration-300 group ${
                 pack.popular
-                  ? "border-purple-500/40 bg-purple-600/5"
-                  : "border-zinc-800 bg-zinc-900/50 hover:border-zinc-700"
+                  ? "border-purple-500/40 bg-gradient-to-b from-purple-600/10 to-purple-600/5 shadow-lg shadow-purple-600/10"
+                  : "border-zinc-800 bg-zinc-900/50 hover:border-zinc-700 hover:bg-zinc-800/50"
               }`}
             >
               {pack.popular && (
-                <span className="absolute -top-2 -right-2 px-2 py-0.5 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-[10px] font-medium text-white">
+                <div className="absolute -top-2.5 -right-2.5 px-2.5 py-1 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-[10px] font-semibold text-white shadow-lg shadow-purple-600/40 flex items-center gap-1">
+                  <Sparkles className="h-3 w-3" />
                   Best Value
-                </span>
+                </div>
               )}
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between mb-3">
                 <div>
-                  <p className="text-sm font-medium text-zinc-200">{pack.name}</p>
+                  <p className="text-sm font-semibold text-zinc-200">{pack.name}</p>
                   <p className="text-xs text-zinc-500 mt-0.5">
                     <Sparkles className="h-3 w-3 inline text-purple-400 mr-0.5" />
                     {formatCredits(pack.credits)} credits
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-lg font-bold text-zinc-100">{priceDisplay}</p>
+                  <p className="text-xl font-bold text-gradient">{priceDisplay}</p>
                   <p className="text-[10px] text-zinc-600">{perCredit}/credit</p>
                 </div>
               </div>
@@ -102,10 +106,10 @@ export function CreditPacks() {
                 onClick={() => handleBuy(pack.id)}
                 disabled={loading !== null}
                 size="sm"
-                className={`w-full mt-3 rounded-xl ${
+                className={`w-full rounded-xl transition-all duration-300 ${
                   pack.popular
-                    ? "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500"
-                    : "bg-zinc-800 hover:bg-zinc-700"
+                    ? "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 shadow-lg shadow-purple-600/30 hover:shadow-purple-600/40"
+                    : "bg-zinc-800 hover:bg-zinc-700 border border-zinc-700/50"
                 }`}
               >
                 {loading === pack.id ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Tag className="h-4 w-4 mr-2" />}

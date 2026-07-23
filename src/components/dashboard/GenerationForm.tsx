@@ -148,24 +148,27 @@ export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
   }
 
   return (
-    <Card className="border-zinc-800/50 bg-zinc-900/40">
+    <Card className="relative overflow-hidden border-purple-500/10 bg-zinc-900/40 shadow-xl shadow-purple-600/5">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-purple-600/5 via-transparent to-transparent" />
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-xl">
-          <Sparkles className="h-5 w-5 text-purple-400" />
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-purple-600 to-pink-600 shadow-lg shadow-purple-600/30">
+            <Sparkles className="h-4 w-4 text-white" />
+          </div>
           Create New Generation
         </CardTitle>
         <CardDescription>
           Describe what you want to create and let AI bring it to life
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-5">
+      <CardContent className="relative z-10 space-y-5">
         <Tabs value={type} onValueChange={handleTypeChange} className="w-full">
-          <TabsList className="w-full">
-            <TabsTrigger value="image" className="flex-1 gap-2">
+          <TabsList className="w-full bg-zinc-900/80 border border-zinc-800/50">
+            <TabsTrigger value="image" className="flex-1 gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600/20 data-[state=active]:to-pink-600/20">
               <ImageIcon className="h-4 w-4" />
               Image
             </TabsTrigger>
-            <TabsTrigger value="video" className="flex-1 gap-2">
+            <TabsTrigger value="video" className="flex-1 gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600/20 data-[state=active]:to-pink-600/20">
               <VideoIcon className="h-4 w-4" />
               Video
             </TabsTrigger>
@@ -173,24 +176,31 @@ export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
         </Tabs>
 
         <div className="space-y-2">
-          <Label htmlFor="generation-prompt">Prompt</Label>
-          <Textarea
-            id="generation-prompt"
-            placeholder="A serene mountain landscape at sunset..."
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            className="min-h-[110px] resize-y"
-            disabled={isGenerating}
-          />
+          <Label htmlFor="generation-prompt" className="text-zinc-300">Prompt</Label>
+          <div className="relative">
+            <Textarea
+              id="generation-prompt"
+              placeholder="A serene mountain landscape at sunset..."
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              className="min-h-[110px] resize-y border-zinc-800 bg-zinc-900/50 focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/20 transition-all duration-300"
+              disabled={isGenerating}
+            />
+            <div className="pointer-events-none absolute bottom-2 right-2">
+              <span className="text-[10px] text-zinc-600">{prompt.length} chars</span>
+            </div>
+          </div>
         </div>
 
         <div>
           <button
             type="button"
             onClick={() => setShowNegative(!showNegative)}
-            className="flex items-center gap-1.5 text-sm text-zinc-400 hover:text-zinc-200 transition-colors"
+            className="flex items-center gap-1.5 text-sm text-zinc-400 hover:text-zinc-200 transition-colors group"
           >
-            {showNegative ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+            <div className={`p-0.5 rounded transition-all duration-300 ${showNegative ? "bg-purple-600/20 text-purple-400" : "text-zinc-500 group-hover:text-zinc-300"}`}>
+              {showNegative ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+            </div>
             Negative Prompt
           </button>
           <AnimatePresence>
@@ -199,7 +209,7 @@ export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: "auto", opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.2 }}
+                transition={{ duration: 0.25 }}
                 className="overflow-hidden"
               >
                 <div className="pt-2">
@@ -207,7 +217,7 @@ export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
                     placeholder="Things to avoid in the generation..."
                     value={negativePrompt}
                     onChange={(e) => setNegativePrompt(e.target.value)}
-                    className="min-h-[80px] resize-y"
+                    className="min-h-[80px] resize-y border-zinc-800 bg-zinc-900/50 focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/20 transition-all duration-300"
                     disabled={isGenerating}
                   />
                 </div>
@@ -220,14 +230,14 @@ export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
 
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label>Model</Label>
+            <Label className="text-zinc-300">Model</Label>
             <Select value={model} onValueChange={setModel} disabled={isGenerating}>
-              <SelectTrigger>
+              <SelectTrigger className="border-zinc-800 bg-zinc-900/50 focus:ring-1 focus:ring-purple-500/20">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="border-zinc-800 bg-zinc-950">
                 {models.map((m) => (
-                  <SelectItem key={m.id} value={m.id}>
+                  <SelectItem key={m.id} value={m.id} className="focus:bg-purple-600/20 focus:text-purple-300">
                     {m.name}
                   </SelectItem>
                 ))}
@@ -236,14 +246,14 @@ export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
           </div>
 
           <div className="space-y-2">
-            <Label>Style</Label>
+            <Label className="text-zinc-300">Style</Label>
             <Select value={style} onValueChange={setStyle} disabled={isGenerating}>
-              <SelectTrigger>
+              <SelectTrigger className="border-zinc-800 bg-zinc-900/50 focus:ring-1 focus:ring-purple-500/20">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="border-zinc-800 bg-zinc-950">
                 {STYLES.map((s) => (
-                  <SelectItem key={s.value} value={s.value}>
+                  <SelectItem key={s.value} value={s.value} className="focus:bg-purple-600/20 focus:text-purple-300">
                     {s.label}
                   </SelectItem>
                 ))}
@@ -253,7 +263,7 @@ export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
         </div>
 
         <div className="space-y-2">
-          <Label>Aspect Ratio</Label>
+          <Label className="text-zinc-300">Aspect Ratio</Label>
           <div className="grid grid-cols-5 gap-2">
             {ASPECT_RATIOS.map((ratio) => (
               <button
@@ -262,10 +272,10 @@ export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
                 onClick={() => handleAspectRatioChange(ratio.value)}
                 disabled={isGenerating}
                 className={cn(
-                  "flex flex-col items-center justify-center rounded-lg border px-2 py-2.5 text-xs transition-all duration-200",
+                  "flex flex-col items-center justify-center rounded-xl border px-2 py-2.5 text-xs transition-all duration-300",
                   aspectRatio === ratio.value
-                    ? "border-purple-600 bg-purple-600/10 text-purple-300"
-                    : "border-zinc-700 bg-zinc-900 text-zinc-400 hover:border-zinc-600 hover:text-zinc-300"
+                    ? "border-purple-500/40 bg-gradient-to-b from-purple-600/20 to-purple-600/5 text-purple-300 shadow-lg shadow-purple-600/10"
+                    : "border-zinc-800 bg-zinc-900/50 text-zinc-400 hover:border-zinc-700 hover:text-zinc-300 hover:bg-zinc-800/50"
                 )}
               >
                 <span className="font-medium">{ratio.label.split(" ")[0]}</span>
@@ -314,7 +324,7 @@ export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
         </AnimatePresence>
 
         <div className="space-y-2">
-          <Label>Batch Count</Label>
+          <Label className="text-zinc-300">Batch Count</Label>
           <div className="flex gap-2">
             {[1, 2, 4].map((count) => (
               <button
@@ -323,10 +333,10 @@ export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
                 onClick={() => setBatchCount(count)}
                 disabled={isGenerating}
                 className={cn(
-                  "flex-1 rounded-lg border py-2 text-sm font-medium transition-all duration-200",
+                  "flex-1 rounded-xl border py-2.5 text-sm font-medium transition-all duration-300",
                   batchCount === count
-                    ? "border-purple-600 bg-purple-600/10 text-purple-300"
-                    : "border-zinc-700 bg-zinc-900 text-zinc-400 hover:border-zinc-600 hover:text-zinc-300"
+                    ? "border-purple-500/40 bg-gradient-to-b from-purple-600/20 to-purple-600/5 text-purple-300 shadow-lg shadow-purple-600/10"
+                    : "border-zinc-800 bg-zinc-900/50 text-zinc-400 hover:border-zinc-700 hover:text-zinc-300"
                 )}
               >
                 {count}x
@@ -352,15 +362,15 @@ export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
                   key={f.id}
                   type="button"
                   onClick={toggle}
-                  className={`p-2.5 rounded-xl border text-left transition-all ${isOn ? "border-purple-500/40 bg-purple-600/10" : isAvailable ? "border-zinc-800 bg-zinc-900/50 hover:border-zinc-700" : "border-zinc-800/30 bg-zinc-900/30 opacity-50"}`}
+                  className={`p-3 rounded-xl border text-left transition-all duration-300 group ${isOn ? "border-purple-500/40 bg-gradient-to-b from-purple-600/15 to-purple-600/5 shadow-lg shadow-purple-600/10" : isAvailable ? "border-zinc-800 bg-zinc-900/50 hover:border-zinc-700 hover:bg-zinc-800/50" : "border-zinc-800/30 bg-zinc-900/30 opacity-50"}`}
                 >
                   <div className="flex items-center gap-1.5 mb-1">
-                    <span className="text-sm">{f.icon}</span>
-                    <span className="text-[11px] font-medium text-zinc-300 truncate">{f.name}</span>
-                    {f.premiumOnly && !isSubscribed && <Lock className="h-2.5 w-2.5 text-amber-400 shrink-0" />}
+                    <span className="text-base">{f.icon}</span>
+                    <span className="text-xs font-medium text-zinc-300 truncate">{f.name}</span>
+                    {f.premiumOnly && !isSubscribed && <Lock className="h-3 w-3 text-amber-400 shrink-0" />}
                   </div>
-                  <p className="text-[9px] text-zinc-600 line-clamp-1">{f.description}</p>
-                  {f.creditCost > 0 && <p className="text-[9px] text-purple-400/70 mt-0.5">+{f.creditCost} credits</p>}
+                  <p className="text-[10px] text-zinc-600 line-clamp-2">{f.description}</p>
+                  {f.creditCost > 0 && <p className="text-[10px] text-purple-400/70 mt-1">+{f.creditCost} credits</p>}
                 </button>
               )
             })}
@@ -369,7 +379,7 @@ export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
 
         {type === "video" && (
           <div className="space-y-2">
-            <Label>Duration</Label>
+            <Label className="text-zinc-300">Duration</Label>
             <div className="flex gap-2">
               {VIDEO_DURATION_OPTIONS.map((opt) => (
                 <button
@@ -377,10 +387,10 @@ export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
                   type="button"
                   onClick={() => setDuration(opt.value)}
                   className={cn(
-                    "flex-1 rounded-lg border py-2 text-sm font-medium transition-all duration-200",
+                    "flex-1 rounded-xl border py-2.5 text-sm font-medium transition-all duration-300",
                     duration === opt.value
-                      ? "border-purple-600 bg-purple-600/10 text-purple-300"
-                      : "border-zinc-700 bg-zinc-900 text-zinc-400 hover:border-zinc-600 hover:text-zinc-300"
+                      ? "border-purple-500/40 bg-gradient-to-b from-purple-600/20 to-purple-600/5 text-purple-300 shadow-lg shadow-purple-600/10"
+                      : "border-zinc-800 bg-zinc-900/50 text-zinc-400 hover:border-zinc-700 hover:text-zinc-300"
                   )}
                 >
                   {opt.label}
@@ -390,12 +400,12 @@ export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
           </div>
         )}
 
-        <div className="flex flex-col gap-3 pt-2">
+        <div className="flex flex-col gap-3 pt-4">
           <Button
             onClick={handleSubmit}
             disabled={!canGenerate}
             size="xl"
-            className="w-full gap-2 text-base"
+            className="w-full gap-2 text-base bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 shadow-lg shadow-purple-600/30 hover:shadow-purple-600/40 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isGenerating ? (
               <>
@@ -410,18 +420,19 @@ export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
             )}
           </Button>
 
-          <div className="flex items-center justify-between text-xs text-zinc-500">
-            <div className="flex items-center gap-1.5">
-              <Zap className="h-3.5 w-3.5 text-yellow-500" />
-              <span>
-                Balance: <span className="text-purple-400 font-medium">{formatCredits(credits)}</span> credits &middot;
-                Cost: <span className="text-purple-400 font-medium">{creditCost}</span> credits
+          <div className="flex items-center justify-between rounded-xl bg-zinc-900/60 border border-zinc-800/50 px-4 py-3 text-xs">
+            <div className="flex items-center gap-2">
+              <Zap className="h-4 w-4 text-yellow-500" />
+              <span className="text-zinc-400">
+                Balance: <span className="text-purple-400 font-semibold">{formatCredits(credits)}</span>
+                <span className="mx-1.5 text-zinc-700">|</span>
+                Cost: <span className="text-purple-400 font-semibold">{creditCost}</span> credits
               </span>
             </div>
             {!hasEnoughCredits(type) && (
-              <div className="flex items-center gap-1 text-red-400">
+              <div className="flex items-center gap-1.5 text-red-400 bg-red-400/10 px-2.5 py-1 rounded-lg">
                 <AlertTriangle className="h-3.5 w-3.5" />
-                <span>Insufficient credits</span>
+                <span className="font-medium">Insufficient credits</span>
               </div>
             )}
           </div>
