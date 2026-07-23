@@ -5,7 +5,7 @@ import CTA from "@/components/landing/CTA"
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-black">
+    <main className="min-h-screen bg-[#0f0f1a]">
       <Hero />
       <Features />
       <PricingSection />

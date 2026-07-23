@@ -6,7 +6,7 @@ import { Sparkles, Loader2, Zap, Tag } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { CREDIT_PACKS } from "@/lib/constants"
-import { formatCredits } from "@/lib/utils"
+import { formatCredits, formatPriceUSD, formatPricePKR } from "@/lib/utils"
 import { toast } from "sonner"
 
 export function CreditPacks() {
@@ -66,8 +66,8 @@ export function CreditPacks() {
         </div>
 
         {CREDIT_PACKS.map((pack, i) => {
-          const price = currency === "PKR" ? pack.prices.PKR : pack.prices.USD
-          const symbol = currency === "PKR" ? "₹" : "$"
+          const priceDisplay = currency === "PKR" ? formatPricePKR(pack.prices.PKR) : formatPriceUSD(pack.prices.USD)
+          const perCredit = currency === "PKR" ? formatPricePKR(pack.prices.PKR / pack.credits) : formatPriceUSD(pack.prices.USD / pack.credits)
           return (
             <motion.div
               key={pack.id}
@@ -94,8 +94,8 @@ export function CreditPacks() {
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-lg font-bold text-zinc-100">{symbol}{price}</p>
-                  <p className="text-[10px] text-zinc-600">{symbol}{(price / pack.credits).toFixed(2)}/credit</p>
+                  <p className="text-lg font-bold text-zinc-100">{priceDisplay}</p>
+                  <p className="text-[10px] text-zinc-600">{perCredit}/credit</p>
                 </div>
               </div>
               <Button

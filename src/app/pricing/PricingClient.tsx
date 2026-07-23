@@ -37,46 +37,47 @@ export function PricingClient() {
   const { user } = useUser()
   const router = useRouter()
 
+  const isFree = (plan: (typeof PLANS)[number]) => plan.id === "free"
+
   const getPrice = (plan: (typeof PLANS)[number]) => {
-    if (plan.price === 0) return "Free"
-    return yearly ? formatPrice(plan.price * 10) : formatPrice(plan.price)
+    if (isFree(plan)) return "Free"
+    const p = plan.prices.USD
+    return yearly ? formatPriceUSD(p * 10) : formatPriceUSD(p)
   }
 
   const getPeriod = (plan: (typeof PLANS)[number]) => {
-    if (plan.price === 0) return null
+    if (isFree(plan)) return null
     return yearly ? "/yr" : "/mo"
   }
 
   const getMultiCurrencyPrices = (plan: (typeof PLANS)[number]) => {
-    if (plan.price === 0) return null
+    if (isFree(plan)) return null
     const p = plan.prices
     if (yearly) {
       return {
         USD: formatPriceUSD(p.USD * 10),
-        INR: formatPrice(p.INR * 10),
         PKR: formatPricePKR(p.PKR * 10),
       }
     }
     return {
       USD: formatPriceUSD(p.USD),
-      INR: formatPrice(p.INR),
       PKR: formatPricePKR(p.PKR),
     }
   }
 
   const getCreditsLabel = (plan: (typeof PLANS)[number]) => {
     const credits = plan.credits.toLocaleString()
-    if (plan.price === 0) return `${credits} credits total`
+    if (isFree(plan)) return `${credits} credits total`
     if (yearly) return `${credits} credits/mo (billed yearly)`
     return `${credits} credits/month`
   }
 
   const getButtonLabel = (plan: (typeof PLANS)[number]) => {
     if (!user) {
-      return plan.price === 0 ? "Get Started" : "Subscribe"
+      return isFree(plan) ? "Get Started" : "Subscribe"
     }
     if (user.subscription_plan === plan.id) return "Current Plan"
-    return plan.price === 0 ? "Downgrade" : "Subscribe"
+    return isFree(plan) ? "Downgrade" : "Subscribe"
   }
 
   const isButtonDisabled = (plan: (typeof PLANS)[number]) => {

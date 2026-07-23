@@ -4,7 +4,7 @@ import { PricingClient } from "./PricingClient"
 
 export default function PricingPage() {
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-[#0f0f1a]">
       <Navbar />
       <PricingClient />
       <Footer />
