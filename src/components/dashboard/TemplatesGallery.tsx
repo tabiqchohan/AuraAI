@@ -17,15 +17,32 @@ function TemplatePreview({ template }: { template: Template }) {
   const [loaded, setLoaded] = useState(false)
 
   return (
-    <div
-      className="relative w-full aspect-[4/3] rounded-lg overflow-hidden"
-      style={{ background: `linear-gradient(135deg, ${template.previewColors?.[0] || "#1e1b4b"}, ${template.previewColors?.[1] || "#7c3aed"})` }}
-    >
-      <div className="absolute inset-0 flex items-center justify-center">
-        <span className="text-3xl opacity-40">{template.emoji}</span>
-      </div>
+    <div className="relative w-full aspect-[4/3] rounded-lg overflow-hidden bg-zinc-900">
+      {template.previewUrl && !imgError ? (
+        <>
+          <img
+            src={template.previewUrl}
+            alt={template.name}
+            className={`w-full h-full object-cover transition-opacity duration-300 ${loaded ? "opacity-100" : "opacity-0"}`}
+            onLoad={() => setLoaded(true)}
+            onError={() => setImgError(true)}
+          />
+          {!loaded && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="h-5 w-5 animate-spin rounded-full border-2 border-purple-400 border-t-transparent" />
+            </div>
+          )}
+        </>
+      ) : (
+        <div
+          className="w-full h-full flex items-center justify-center"
+          style={{ background: `linear-gradient(135deg, ${template.previewColors?.[0] || "#1e1b4b"}, ${template.previewColors?.[1] || "#7c3aed"})` }}
+        >
+          <span className="text-3xl opacity-40">{template.emoji}</span>
+        </div>
+      )}
       {template.type === "video" && (
-        <div className="absolute bottom-1.5 right-1.5 flex items-center gap-1 rounded-md bg-black/60 px-1.5 py-0.5 text-[9px] text-white">
+        <div className="absolute bottom-1.5 right-1.5 flex items-center gap-1 rounded-md bg-black/60 px-1.5 py-0.5 text-[9px] text-white backdrop-blur-sm">
           <Play className="h-2.5 w-2.5 fill-white" />
         </div>
       )}
