@@ -4,7 +4,7 @@ import { CheckCircle } from "lucide-react"
 
 export default function SuccessPage() {
   return (
-    <div className="min-h-screen bg-[#0f0f1a] flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col">
       <main className="flex-1 flex items-center justify-center px-4">
         <div className="max-w-md mx-auto text-center">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-500/10 mb-6">

@@ -135,7 +135,7 @@ export function PricingClient() {
   }
 
   return (
-    <section className="py-24 px-4 bg-black relative overflow-hidden min-h-screen pt-32">
+    <section className="py-24 px-4 bg-background relative overflow-hidden min-h-screen pt-32">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(120,50,200,0.08),transparent_50%)]" />
 
       <div className="relative z-10 max-w-7xl mx-auto">
@@ -145,7 +145,7 @@ export function PricingClient() {
           transition={{ duration: 0.5 }}
           className="text-center mb-12"
         >
-          <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4">
+          <h1 className="text-4xl sm:text-5xl font-bold text-foreground mb-4">
             Simple,{" "}
             <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
               transparent pricing
@@ -214,9 +214,9 @@ export function PricingClient() {
               )}
 
               <div className="mb-6">
-                <h3 className="text-xl font-semibold text-white">{plan.name}</h3>
+                <h3 className="text-xl font-semibold text-foreground">{plan.name}</h3>
                 <div className="mt-4 flex items-baseline gap-1">
-                  <span className="text-4xl font-bold text-white">
+                  <span className="text-4xl font-bold text-foreground">
                     {getPrice(plan)}
                   </span>
                   {getPeriod(plan) && (

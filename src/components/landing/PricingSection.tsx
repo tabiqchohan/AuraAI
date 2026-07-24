@@ -27,7 +27,7 @@ const cardVariants = {
 
 export default function PricingSection() {
   return (
-    <section className="py-24 bg-black relative overflow-hidden">
+    <section className="py-24 bg-background relative overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(120,50,200,0.08),transparent_50%)]" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -38,7 +38,7 @@ export default function PricingSection() {
           transition={{ duration: 0.5 }}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl sm:text-4xl font-bold text-white">
+          <h2 className="text-3xl sm:text-4xl font-bold text-foreground">
             Simple,{" "}
             <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
               transparent pricing
@@ -76,16 +76,16 @@ export default function PricingSection() {
               )}
 
               <div className="mb-6">
-                <h3 className="text-xl font-semibold text-white">{plan.name}</h3>
+                <h3 className="text-xl font-semibold text-foreground">{plan.name}</h3>
                 <div className="mt-4 flex items-baseline gap-1">
-                  <span className="text-4xl font-bold text-white">
-                    {plan.price === 0 ? "Free" : formatPrice(plan.price)}
+                  <span className="text-4xl font-bold text-foreground">
+                    {plan.id === "free" ? "Free" : formatPriceUSD(plan.prices.USD)}
                   </span>
-                  {plan.price > 0 && (
+                  {plan.id !== "free" && (
                     <span className="text-zinc-500 text-sm">/mo</span>
                   )}
                 </div>
-                {plan.price > 0 && (
+                {plan.id !== "free" && (
                   <div className="mt-2 space-y-0.5">
                     <p className="text-zinc-400 text-xs">
                       {formatPriceUSD(plan.prices.USD)} USD
@@ -97,7 +97,7 @@ export default function PricingSection() {
                 )}
                 <p className="mt-2 text-zinc-400 text-sm">
                   {formatCredits(plan.credits)} credits
-                  {plan.price > 0 ? " per month" : " one-time"}
+                  {plan.id === "free" ? " one-time" : " per month"}
                 </p>
               </div>
 
@@ -110,7 +110,7 @@ export default function PricingSection() {
                 ))}
               </ul>
 
-              <Link href={plan.price === 0 ? "/signup" : "/pricing"}>
+              <Link href={plan.id === "free" ? "/signup" : "/pricing"}>
                 <Button
                   variant={plan.popular ? "premium" : "outline"}
                   className={cn(
@@ -119,7 +119,7 @@ export default function PricingSection() {
                   )}
                   size="lg"
                 >
-                  {plan.price === 0 ? "Get Started" : "Subscribe"}
+                  {plan.id === "free" ? "Get Started" : "Subscribe"}
                 </Button>
               </Link>
             </motion.div>
