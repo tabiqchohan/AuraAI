@@ -32,7 +32,7 @@ export default function DashboardPage() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
     >
-      <div className="relative mb-10 overflow-hidden rounded-2xl bg-gradient-to-br from-purple-900/20 via-zinc-900/50 to-zinc-950 p-6 sm:p-8 border border-purple-500/10">
+      <div className="relative mb-10 overflow-hidden rounded-2xl bg-gradient-to-br from-purple-900/20 via-card/50 to-background p-6 sm:p-8 border border-purple-500/10">
         <div className="pointer-events-none absolute -top-20 -right-20 h-60 w-60 rounded-full bg-purple-600/10 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-pink-600/10 blur-3xl" />
         <div className="relative z-10">
@@ -44,7 +44,7 @@ export default function DashboardPage() {
               Dashboard
             </h1>
           </div>
-          <p className="text-sm text-zinc-400 max-w-2xl">
+          <p className="text-sm text-muted-foreground max-w-2xl">
             Generate stunning AI images and videos, manage your credits, and explore creative templates
           </p>
         </div>
@@ -66,15 +66,15 @@ export default function DashboardPage() {
             <button
               type="button"
               onClick={() => setShowStudio(!showStudio)}
-              className="group flex items-center justify-between w-full p-4 rounded-xl border border-zinc-800/50 bg-zinc-900/30 hover:bg-zinc-900/60 hover:border-purple-500/20 transition-all duration-300"
+              className="group flex items-center justify-between w-full p-4 rounded-xl border border-border/50 bg-card/30 hover:bg-card/60 hover:border-purple-500/20 transition-all duration-300"
             >
-              <h2 className="text-xl font-semibold text-zinc-100 flex items-center gap-3">
+              <h2 className="text-xl font-semibold text-foreground flex items-center gap-3">
                 <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-purple-600/20 to-pink-600/20 border border-purple-500/20">
                   <Film className="h-5 w-5 text-purple-400" />
                 </div>
                 Video Studio
               </h2>
-              <div className={`p-1.5 rounded-lg transition-all duration-300 ${showStudio ? "bg-purple-600/20 text-purple-400" : "text-zinc-600 group-hover:text-zinc-400"}`}>
+              <div className={`p-1.5 rounded-lg transition-all duration-300 ${showStudio ? "bg-purple-600/20 text-purple-400" : "text-muted-foreground group-hover:text-foreground"}`}>
                 {showStudio ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
               </div>
             </button>

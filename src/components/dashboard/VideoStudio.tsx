@@ -186,7 +186,7 @@ export function VideoStudio() {
   const showUploadOption = !loading
 
   return (
-    <Card className="relative overflow-hidden border-purple-500/10 bg-zinc-900/40 shadow-xl shadow-purple-600/5">
+    <Card className="relative overflow-hidden border-purple-500/10 bg-card/40 shadow-xl shadow-purple-600/5">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-xl">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-purple-600 to-pink-600 shadow-lg shadow-purple-600/30">
@@ -204,18 +204,18 @@ export function VideoStudio() {
                 <div className="h-2 w-2 rounded-full bg-purple-400 animate-pulse" />
                 {selected.length} clips selected
               </span>
-              <span className="text-xs text-zinc-500">~{selected.length * 15} sec total</span>
+              <span className="text-xs text-muted-foreground">~{selected.length * 15} sec total</span>
             </div>
             <div className="space-y-1.5 mb-3 max-h-48 overflow-y-auto custom-scrollbar">
               {selectedClips.map((v, i) => (
                 <div key={v.id} className="flex items-center gap-2 p-2 rounded-lg bg-zinc-800/70 border border-zinc-700/30">
                   <span className="flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-br from-purple-600 to-pink-600 text-[10px] font-bold text-white shrink-0">{i + 1}</span>
-                  <span className="text-xs text-zinc-300 truncate flex-1">{v.prompt}</span>
+                  <span className="text-xs text-card-foreground truncate flex-1">{v.prompt}</span>
                   {v.isLocal && <span className="text-[9px] text-yellow-500 shrink-0">Local</span>}
-                  <button type="button" onClick={() => moveUp(v.id)} disabled={i === 0} className="p-1 text-zinc-600 hover:text-zinc-300 disabled:opacity-30 transition-colors rounded hover:bg-zinc-700/50">
+                  <button type="button" onClick={() => moveUp(v.id)} disabled={i === 0} className="p-1 text-muted-foreground hover:text-card-foreground disabled:opacity-30 transition-colors rounded hover:bg-zinc-700/50">
                     <ChevronUp className="h-3.5 w-3.5" />
                   </button>
-                  <button type="button" onClick={() => moveDown(v.id)} disabled={i === selectedClips.length - 1} className="p-1 text-zinc-600 hover:text-zinc-300 disabled:opacity-30 transition-colors rounded hover:bg-zinc-700/50">
+                  <button type="button" onClick={() => moveDown(v.id)} disabled={i === selectedClips.length - 1} className="p-1 text-muted-foreground hover:text-card-foreground disabled:opacity-30 transition-colors rounded hover:bg-zinc-700/50">
                     <ChevronDown className="h-3.5 w-3.5" />
                   </button>
                   {v.isLocal ? (
@@ -257,7 +257,7 @@ export function VideoStudio() {
               type="button"
               onClick={() => fileInputRef.current?.click()}
               disabled={uploadingLocal}
-              className="w-full p-3 rounded-xl border-2 border-dashed border-zinc-800 bg-zinc-900/30 hover:border-zinc-700 hover:bg-zinc-900/50 transition-all duration-300 flex items-center justify-center gap-2 text-sm text-zinc-500 hover:text-zinc-300"
+              className="w-full p-3 rounded-xl border-2 border-dashed border-border bg-card/30 hover:border-accent hover:bg-card/50 transition-all duration-300 flex items-center justify-center gap-2 text-sm text-muted-foreground hover:text-card-foreground"
             >
               {uploadingLocal ? (
                 <><Loader2 className="h-4 w-4 animate-spin" /> Uploading...</>
@@ -275,12 +275,12 @@ export function VideoStudio() {
             ))}
           </div>
         ) : allClips.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 text-zinc-600">
-            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-900/20 to-zinc-900 border border-zinc-800/50">
+          <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
+            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-900/20 to-zinc-900 border border-border/50">
               <VideoIcon className="h-8 w-8 text-purple-500/30" />
             </div>
-            <p className="text-sm text-zinc-400 font-medium">No videos to merge</p>
-            <p className="text-xs text-zinc-600 mt-1">Generate or upload videos to get started</p>
+            <p className="text-sm text-muted-foreground font-medium">No videos to merge</p>
+            <p className="text-xs text-muted-foreground mt-1">Generate or upload videos to get started</p>
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-3">
@@ -295,7 +295,7 @@ export function VideoStudio() {
                 className={`relative aspect-video rounded-xl overflow-hidden border-2 transition-all duration-300 group ${
                   selected.includes(v.id)
                     ? "border-purple-500 ring-2 ring-purple-500/40 shadow-lg shadow-purple-600/20"
-                    : "border-zinc-800 hover:border-zinc-700 hover:shadow-lg"
+                    : "border-border hover:border-accent hover:shadow-lg"
                 }`}
               >
                 <video
@@ -307,16 +307,16 @@ export function VideoStudio() {
                   onMouseLeave={(e) => { e.currentTarget.pause(); e.currentTarget.currentTime = 0 }}
                 />
                 <div className="absolute inset-x-0 bottom-0 p-2 bg-gradient-to-t from-black/90 via-black/50 to-transparent">
-                  <p className="text-[10px] text-zinc-300 truncate font-medium">{v.prompt}</p>
-                  <p className="text-[9px] text-zinc-500">{v.isLocal ? "Local clip" : formatDate(v.created_at)}</p>
+                  <p className="text-[10px] text-card-foreground truncate font-medium">{v.prompt}</p>
+                  <p className="text-[9px] text-muted-foreground">{v.isLocal ? "Local clip" : formatDate(v.created_at)}</p>
                 </div>
                 {selected.includes(v.id) ? (
                   <div className="absolute top-2 right-2 h-7 w-7 rounded-full bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center shadow-lg shadow-purple-600/40">
                     <span className="text-white text-xs font-bold">{selected.indexOf(v.id) + 1}</span>
                   </div>
                 ) : (
-                  <div className="absolute top-2 right-2 h-7 w-7 rounded-full bg-zinc-900/60 backdrop-blur-sm border border-zinc-700/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <span className="text-zinc-400 text-xs">+</span>
+                  <div className="absolute top-2 right-2 h-7 w-7 rounded-full bg-card/60 backdrop-blur-sm border border-zinc-700/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <span className="text-muted-foreground text-xs">+</span>
                   </div>
                 )}
                 {v.isLocal && (

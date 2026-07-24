@@ -72,8 +72,8 @@ export function GenerationCard({ generation, onDelete, onLike, onDownload, onSha
       transition={{ duration: 0.3 }}
       layout
     >
-      <Card className="group relative overflow-hidden border-zinc-800/50 bg-zinc-900/40 hover:border-purple-500/30 transition-all duration-500 hover:shadow-xl hover:shadow-purple-600/10">
-        <div className="relative aspect-square overflow-hidden bg-zinc-950">
+      <Card className="group relative overflow-hidden border-border/50 bg-card/40 hover:border-purple-500/30 transition-all duration-500 hover:shadow-xl hover:shadow-purple-600/10">
+        <div className="relative aspect-square overflow-hidden bg-background">
           {previewUrl && !imageError ? (
             <>
               {isImage ? (
@@ -103,16 +103,16 @@ export function GenerationCard({ generation, onDelete, onLike, onDownload, onSha
               )}
               {!imageLoaded && (
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <Loader2 className="h-6 w-6 animate-spin text-zinc-500" />
+                  <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
                 </div>
               )}
             </>
           ) : (
             <div className="flex h-full items-center justify-center bg-gradient-to-br from-zinc-900 to-zinc-950">
               {isImage ? (
-                <ImageIcon className="h-12 w-12 text-zinc-700" />
+                <ImageIcon className="h-12 w-12 text-muted-foreground" />
               ) : (
-                <VideoIcon className="h-12 w-12 text-zinc-700" />
+                <VideoIcon className="h-12 w-12 text-muted-foreground" />
               )}
             </div>
           )}
@@ -132,7 +132,7 @@ export function GenerationCard({ generation, onDelete, onLike, onDownload, onSha
           <div className="absolute inset-x-0 bottom-0 flex justify-center gap-1.5 p-3 opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500">
             <Button
               size="icon"
-              className="h-9 w-9 rounded-full bg-white/10 backdrop-blur-md hover:bg-white/20 border border-white/10 text-zinc-200 shadow-lg"
+              className="h-9 w-9 rounded-full bg-white/10 backdrop-blur-md hover:bg-white/20 border border-white/10 text-foreground shadow-lg"
               onClick={handleDownload}
               disabled={generation.status !== "completed"}
               title="Download"
@@ -143,7 +143,7 @@ export function GenerationCard({ generation, onDelete, onLike, onDownload, onSha
               size="icon"
               className={cn(
                 "h-9 w-9 rounded-full bg-white/10 backdrop-blur-md hover:bg-white/20 border border-white/10 shadow-lg",
-                liked ? "text-red-400" : "text-zinc-200"
+                liked ? "text-red-400" : "text-foreground"
               )}
               onClick={handleLike}
               disabled={generation.status !== "completed"}
@@ -153,7 +153,7 @@ export function GenerationCard({ generation, onDelete, onLike, onDownload, onSha
             </Button>
             <Button
               size="icon"
-              className="h-9 w-9 rounded-full bg-white/10 backdrop-blur-md hover:bg-white/20 border border-white/10 text-zinc-200 shadow-lg"
+              className="h-9 w-9 rounded-full bg-white/10 backdrop-blur-md hover:bg-white/20 border border-white/10 text-foreground shadow-lg"
               onClick={handleShare}
               disabled={generation.status !== "completed"}
               title="Share"
@@ -171,9 +171,9 @@ export function GenerationCard({ generation, onDelete, onLike, onDownload, onSha
           </div>
         </div>
         <CardContent className="p-3.5 space-y-2">
-          <p className="text-sm text-zinc-300 line-clamp-2 leading-snug group-hover:text-zinc-200 transition-colors">{generation.prompt}</p>
+          <p className="text-sm text-card-foreground line-clamp-2 leading-snug group-hover:text-foreground transition-colors">{generation.prompt}</p>
           <div className="flex items-center justify-between text-xs">
-            <span className="text-zinc-500">{formatDate(generation.created_at)}</span>
+            <span className="text-muted-foreground">{formatDate(generation.created_at)}</span>
             <span className="flex items-center gap-1 rounded-md bg-purple-600/10 px-2 py-0.5">
               <span className="text-purple-400 font-semibold">{formatCredits(generation.credits_used)}</span>
               <span className="text-purple-400/70">credits</span>

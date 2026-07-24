@@ -52,7 +52,7 @@ export function CreditBalance() {
   }
 
   return (
-    <Card className="relative overflow-hidden border-purple-500/10 bg-gradient-to-br from-zinc-900/80 to-zinc-950/80 shadow-xl shadow-purple-600/5">
+    <Card className="relative overflow-hidden border-purple-500/10 bg-gradient-to-br from-card/80 to-background/80 shadow-xl shadow-purple-600/5">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-purple-600/15 via-transparent to-transparent" />
       <div className="pointer-events-none absolute -top-20 -right-20 h-40 w-40 rounded-full bg-purple-600/10 blur-3xl" />
       <CardHeader className="pb-3">
@@ -73,25 +73,25 @@ export function CreditBalance() {
           >
             <AnimatedCounter value={credits} />
           </motion.span>
-          <span className="text-sm text-zinc-500">credits available</span>
+          <span className="text-sm text-muted-foreground">credits available</span>
         </div>
 
         <div className="space-y-1.5">
           <div className="flex items-center justify-between text-xs">
-            <span className="text-zinc-500">Usage</span>
-            <span className="text-zinc-400">{usagePercent}%</span>
+            <span className="text-muted-foreground">Usage</span>
+            <span className="text-muted-foreground">{usagePercent}%</span>
           </div>
           <Progress
             value={usagePercent}
-            className="h-2 bg-zinc-800 [&>div]:bg-gradient-to-r [&>div]:from-purple-600 [&>div]:to-pink-600"
+            className="h-2 bg-muted [&>div]:bg-gradient-to-r [&>div]:from-purple-600 [&>div]:to-pink-600"
           />
         </div>
 
-        <div className="flex items-center gap-2.5 rounded-xl bg-gradient-to-r from-zinc-800/80 to-zinc-900/80 border border-zinc-700/30 p-3.5 text-xs">
+        <div className="flex items-center gap-2.5 rounded-xl bg-gradient-to-r from-muted/80 to-card/80 border border-accent/30 p-3.5 text-xs">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-yellow-500/10">
             <Zap className="h-4 w-4 text-yellow-500" />
           </div>
-          <div className="text-zinc-400 leading-relaxed">
+          <div className="text-muted-foreground leading-relaxed">
             Each image costs <span className="text-purple-400 font-semibold">5</span> credits, videos cost{" "}
             <span className="text-purple-400 font-semibold">20</span> credits
           </div>

@@ -21,7 +21,7 @@ function GridSkeleton() {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {Array.from({ length: 8 }).map((_, i) => (
-        <div key={i} className="overflow-hidden rounded-xl border border-zinc-800/50 bg-zinc-900/40">
+        <div key={i} className="overflow-hidden rounded-xl border border-border/50 bg-card/40">
           <Skeleton className="aspect-square rounded-none" />
           <div className="p-3 space-y-2">
             <Skeleton className="h-4 w-full" />
@@ -131,7 +131,7 @@ export function GenerationGrid({
         <Button
           variant="outline"
           size="sm"
-          className="gap-2 border-zinc-800 bg-zinc-900/50 hover:bg-zinc-800 hover:text-zinc-200 rounded-lg"
+          className="gap-2 border-zinc-800 bg-card/50 hover:bg-accent hover:text-foreground rounded-lg"
           onClick={() => setSort(sort === "date" ? "popularity" : "date")}
         >
           <ArrowUpDown className="h-3.5 w-3.5" />

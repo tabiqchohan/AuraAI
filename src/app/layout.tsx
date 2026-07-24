@@ -39,10 +39,10 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased dark`}
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col bg-[#0f0f1a] text-zinc-100">
+      <body className="min-h-full flex flex-col bg-background text-foreground">
         <Providers>
           <PublicLayout>{children}</PublicLayout>
         </Providers>

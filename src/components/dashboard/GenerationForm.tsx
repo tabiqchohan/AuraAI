@@ -170,7 +170,7 @@ export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
   }
 
   return (
-    <Card className="relative overflow-hidden border-purple-500/10 bg-zinc-900/40 shadow-xl shadow-purple-600/5">
+    <Card className="relative overflow-hidden border-purple-500/10 bg-card/40 shadow-xl shadow-purple-600/5">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-purple-600/5 via-transparent to-transparent" />
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-xl">
@@ -185,7 +185,7 @@ export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
       </CardHeader>
       <CardContent className="relative z-10 space-y-5">
         <Tabs value={type} onValueChange={handleTypeChange} className="w-full">
-          <TabsList className="w-full bg-zinc-900/80 border border-zinc-800/50">
+          <TabsList className="w-full bg-card/80 border border-border">
             <TabsTrigger value="image" className="flex-1 gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600/20 data-[state=active]:to-pink-600/20">
               <ImageIcon className="h-4 w-4" />
               Image
@@ -198,18 +198,18 @@ export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
         </Tabs>
 
         <div className="space-y-2">
-          <Label htmlFor="generation-prompt" className="text-zinc-300">Prompt</Label>
+          <Label htmlFor="generation-prompt" className="text-card-foreground">Prompt</Label>
           <div className="relative">
             <Textarea
               id="generation-prompt"
               placeholder="A serene mountain landscape at sunset..."
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
-              className="min-h-[110px] resize-y border-zinc-800 bg-zinc-900/50 focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/20 transition-all duration-300"
+              className="min-h-[110px] resize-y border-border bg-card/50 focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/20 transition-all duration-300"
               disabled={isGenerating}
             />
             <div className="pointer-events-none absolute bottom-2 right-2">
-              <span className="text-[10px] text-zinc-600">{prompt.length} chars</span>
+              <span className="text-[10px] text-muted-foreground">{prompt.length} chars</span>
             </div>
           </div>
         </div>
@@ -218,9 +218,9 @@ export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
           <button
             type="button"
             onClick={() => setShowNegative(!showNegative)}
-            className="flex items-center gap-1.5 text-sm text-zinc-400 hover:text-zinc-200 transition-colors group"
+            className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-zinc-200 transition-colors group"
           >
-            <div className={`p-0.5 rounded transition-all duration-300 ${showNegative ? "bg-purple-600/20 text-purple-400" : "text-zinc-500 group-hover:text-zinc-300"}`}>
+            <div className={`p-0.5 rounded transition-all duration-300 ${showNegative ? "bg-purple-600/20 text-purple-400" : "text-muted-foreground group-hover:text-card-foreground"}`}>
               {showNegative ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
             </div>
             Negative Prompt
@@ -239,7 +239,7 @@ export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
                     placeholder="Things to avoid in the generation..."
                     value={negativePrompt}
                     onChange={(e) => setNegativePrompt(e.target.value)}
-                    className="min-h-[80px] resize-y border-zinc-800 bg-zinc-900/50 focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/20 transition-all duration-300"
+                    className="min-h-[80px] resize-y border-border bg-card/50 focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/20 transition-all duration-300"
                     disabled={isGenerating}
                   />
                 </div>
@@ -250,7 +250,7 @@ export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
 
         {type === "image" && (
           <div className="space-y-2">
-            <Label className="text-xs text-zinc-500 uppercase tracking-wider">Reference Image</Label>
+            <Label className="text-xs text-muted-foreground uppercase tracking-wider">Reference Image</Label>
             <AnimatePresence mode="wait">
               {referenceImage ? (
                 <motion.div
@@ -258,7 +258,7 @@ export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
-                  className="relative rounded-xl overflow-hidden border border-zinc-800 bg-zinc-900/50 group"
+                  className="relative rounded-xl overflow-hidden border border-border bg-card/50 group"
                 >
                   <div className="relative aspect-video">
                     <img src={referenceImage} alt="Reference" className="w-full h-full object-cover" />
@@ -280,7 +280,7 @@ export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                   onClick={() => fileInputRef.current?.click()}
-                  className="cursor-pointer rounded-xl border-2 border-dashed border-zinc-800 bg-zinc-900/30 hover:border-zinc-700 hover:bg-zinc-900/50 transition-all duration-300 p-5 text-center"
+                  className="cursor-pointer rounded-xl border-2 border-dashed border-border bg-card/30 hover:border-accent hover:bg-card/50 transition-all duration-300 p-5 text-center"
                 >
                   <input
                     ref={fileInputRef}
@@ -292,18 +292,18 @@ export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
                   {uploadingRef ? (
                     <div className="flex flex-col items-center gap-2">
                       <Loader2 className="h-6 w-6 animate-spin text-purple-400" />
-                      <p className="text-xs text-zinc-500">Uploading...</p>
+                      <p className="text-xs text-muted-foreground">Uploading...</p>
                     </div>
                   ) : (
                     <div className="flex flex-col items-center gap-2">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-zinc-800/50">
-                        <Upload className="h-5 w-5 text-zinc-500" />
+                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
+                        <Upload className="h-5 w-5 text-muted-foreground" />
                       </div>
                       <div>
-                        <p className="text-sm text-zinc-400">
+                        <p className="text-sm text-muted-foreground">
                           <span className="text-purple-400 font-medium">Upload</span> a reference image
                         </p>
-                        <p className="text-[10px] text-zinc-600 mt-0.5">PNG, JPG, WEBP &middot; Max 10MB</p>
+                        <p className="text-[10px] text-muted-foreground mt-0.5">PNG, JPG, WEBP &middot; Max 10MB</p>
                       </div>
                     </div>
                   )}
@@ -317,12 +317,12 @@ export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
 
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label className="text-zinc-300">Model</Label>
+            <Label className="text-card-foreground">Model</Label>
             <Select value={model} onValueChange={setModel} disabled={isGenerating}>
-              <SelectTrigger className="border-zinc-800 bg-zinc-900/50 focus:ring-1 focus:ring-purple-500/20">
+              <SelectTrigger className="border-border bg-card/50 focus:ring-1 focus:ring-purple-500/20">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="border-zinc-800 bg-zinc-950">
+              <SelectContent className="border-border bg-background">
                 {models.map((m) => (
                   <SelectItem key={m.id} value={m.id} className="focus:bg-purple-600/20 focus:text-purple-300">
                     {m.name}
@@ -333,12 +333,12 @@ export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
           </div>
 
           <div className="space-y-2">
-            <Label className="text-zinc-300">Style</Label>
+            <Label className="text-card-foreground">Style</Label>
             <Select value={style} onValueChange={setStyle} disabled={isGenerating}>
-              <SelectTrigger className="border-zinc-800 bg-zinc-900/50 focus:ring-1 focus:ring-purple-500/20">
+              <SelectTrigger className="border-border bg-card/50 focus:ring-1 focus:ring-purple-500/20">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="border-zinc-800 bg-zinc-950">
+              <SelectContent className="border-border bg-background">
                 {STYLES.map((s) => (
                   <SelectItem key={s.value} value={s.value} className="focus:bg-purple-600/20 focus:text-purple-300">
                     {s.label}
@@ -350,7 +350,7 @@ export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
         </div>
 
         <div className="space-y-2">
-          <Label className="text-zinc-300">Aspect Ratio</Label>
+          <Label className="text-card-foreground">Aspect Ratio</Label>
           <div className="grid grid-cols-5 gap-2">
             {ASPECT_RATIOS.map((ratio) => (
               <button
@@ -362,7 +362,7 @@ export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
                   "flex flex-col items-center justify-center rounded-xl border px-2 py-2.5 text-xs transition-all duration-300",
                   aspectRatio === ratio.value
                     ? "border-purple-500/40 bg-gradient-to-b from-purple-600/20 to-purple-600/5 text-purple-300 shadow-lg shadow-purple-600/10"
-                    : "border-zinc-800 bg-zinc-900/50 text-zinc-400 hover:border-zinc-700 hover:text-zinc-300 hover:bg-zinc-800/50"
+                    : "border-border bg-card/50 text-muted-foreground hover:border-accent hover:text-card-foreground hover:bg-muted"
                 )}
               >
                 <span className="font-medium">{ratio.label.split(" ")[0]}</span>
@@ -411,7 +411,7 @@ export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
         </AnimatePresence>
 
         <div className="space-y-2">
-          <Label className="text-zinc-300">Batch Count</Label>
+          <Label className="text-card-foreground">Batch Count</Label>
           <div className="flex gap-2">
             {[1, 2, 4].map((count) => (
               <button
@@ -423,7 +423,7 @@ export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
                   "flex-1 rounded-xl border py-2.5 text-sm font-medium transition-all duration-300",
                   batchCount === count
                     ? "border-purple-500/40 bg-gradient-to-b from-purple-600/20 to-purple-600/5 text-purple-300 shadow-lg shadow-purple-600/10"
-                    : "border-zinc-800 bg-zinc-900/50 text-zinc-400 hover:border-zinc-700 hover:text-zinc-300"
+                    : "border-border bg-card/50 text-muted-foreground hover:border-accent hover:text-card-foreground"
                 )}
               >
                 {count}x
@@ -433,7 +433,7 @@ export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
         </div>
 
         <div className="space-y-2">
-          <Label className="text-xs text-zinc-500 uppercase tracking-wider">Add-ons</Label>
+          <Label className="text-xs text-muted-foreground uppercase tracking-wider">Add-ons</Label>
           <div className="grid grid-cols-3 gap-2">
             {ADDON_FEATURES.map((f) => {
               const isAvailable = !f.premiumOnly || isSubscribed
@@ -449,14 +449,14 @@ export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
                   key={f.id}
                   type="button"
                   onClick={toggle}
-                  className={`p-3 rounded-xl border text-left transition-all duration-300 group ${isOn ? "border-purple-500/40 bg-gradient-to-b from-purple-600/15 to-purple-600/5 shadow-lg shadow-purple-600/10" : isAvailable ? "border-zinc-800 bg-zinc-900/50 hover:border-zinc-700 hover:bg-zinc-800/50" : "border-zinc-800/30 bg-zinc-900/30 opacity-50"}`}
+                  className={`p-3 rounded-xl border text-left transition-all duration-300 group ${isOn ? "border-purple-500/40 bg-gradient-to-b from-purple-600/15 to-purple-600/5 shadow-lg shadow-purple-600/10" : isAvailable ? "border-border bg-card/50 hover:border-accent hover:bg-muted" : "border-border/30 bg-card/30 opacity-50"}`}
                 >
                   <div className="flex items-center gap-1.5 mb-1">
                     <span className="text-base">{f.icon}</span>
-                    <span className="text-xs font-medium text-zinc-300 truncate">{f.name}</span>
+                    <span className="text-xs font-medium text-card-foreground truncate">{f.name}</span>
                     {f.premiumOnly && !isSubscribed && <Lock className="h-3 w-3 text-amber-400 shrink-0" />}
                   </div>
-                  <p className="text-[10px] text-zinc-600 line-clamp-2">{f.description}</p>
+                  <p className="text-[10px] text-muted-foreground line-clamp-2">{f.description}</p>
                   {f.creditCost > 0 && <p className="text-[10px] text-purple-400/70 mt-1">+{f.creditCost} credits</p>}
                 </button>
               )
@@ -466,7 +466,7 @@ export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
 
         {type === "video" && (
           <div className="space-y-2">
-            <Label className="text-zinc-300">Duration</Label>
+            <Label className="text-card-foreground">Duration</Label>
             <div className="flex gap-2">
               {VIDEO_DURATION_OPTIONS.map((opt) => (
                 <button
@@ -477,7 +477,7 @@ export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
                     "flex-1 rounded-xl border py-2.5 text-sm font-medium transition-all duration-300",
                     duration === opt.value
                       ? "border-purple-500/40 bg-gradient-to-b from-purple-600/20 to-purple-600/5 text-purple-300 shadow-lg shadow-purple-600/10"
-                      : "border-zinc-800 bg-zinc-900/50 text-zinc-400 hover:border-zinc-700 hover:text-zinc-300"
+                      : "border-border bg-card/50 text-muted-foreground hover:border-accent hover:text-card-foreground"
                   )}
                 >
                   {opt.label}
@@ -507,10 +507,10 @@ export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
             )}
           </Button>
 
-          <div className="flex items-center justify-between rounded-xl bg-zinc-900/60 border border-zinc-800/50 px-4 py-3 text-xs">
+          <div className="flex items-center justify-between rounded-xl bg-card/60 border border-border px-4 py-3 text-xs">
             <div className="flex items-center gap-2">
               <Zap className="h-4 w-4 text-yellow-500" />
-              <span className="text-zinc-400">
+              <span className="text-muted-foreground">
                 Balance: <span className="text-purple-400 font-semibold">{formatCredits(credits)}</span>
                 <span className="mx-1.5 text-zinc-700">|</span>
                 Cost: <span className="text-purple-400 font-semibold">{creditCost}</span> credits
