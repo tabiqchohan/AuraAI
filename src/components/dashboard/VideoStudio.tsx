@@ -1,8 +1,8 @@
 "use client"
 
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState, useRef, useCallback } from "react"
 import { motion } from "framer-motion"
-import { VideoIcon, Loader2, Trash2, ChevronUp, ChevronDown, Download, Merge, Film, Sparkles } from "lucide-react"
+import { VideoIcon, Loader2, Trash2, ChevronUp, ChevronDown, Merge, Film, Upload } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
@@ -16,17 +16,23 @@ interface VideoGeneration {
   output_url: string
   prompt: string
   created_at: string
+  isLocal?: boolean
 }
 
 export function VideoStudio() {
   const { user } = useUser()
   const [videos, setVideos] = useState<VideoGeneration[]>([])
+  const [localClips, setLocalClips] = useState<VideoGeneration[]>([])
   const [loading, setLoading] = useState(true)
   const [selected, setSelected] = useState<string[]>([])
   const [merging, setMerging] = useState(false)
   const [ffmpeg, setFfmpeg] = useState<FFmpeg | null>(null)
   const [loadingFFmpeg, setLoadingFFmpeg] = useState(false)
   const [progress, setProgress] = useState("")
+  const [uploadingLocal, setUploadingLocal] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const allClips = [...videos, ...localClips]
 
   useEffect(() => {
     if (!user) return
@@ -47,6 +53,33 @@ export function VideoStudio() {
     }
     load()
   }, [user])
+
+  const handleLocalUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (!file.type.startsWith("video/")) { toast.error("Please upload a video file"); return }
+    if (file.size > 100 * 1024 * 1024) { toast.error("Max file size 100MB"); return }
+    setUploadingLocal(true)
+    const blobUrl = URL.createObjectURL(file)
+    const clip: VideoGeneration = {
+      id: `local-${Date.now()}`,
+      output_url: blobUrl,
+      prompt: file.name.replace(/\.[^/.]+$/, ""),
+      created_at: new Date().toISOString(),
+      isLocal: true,
+    }
+    setLocalClips((prev) => [clip, ...prev])
+    setUploadingLocal(false)
+    if (fileInputRef.current) fileInputRef.current.value = ""
+    toast.success("Local clip added")
+  }, [])
+
+  const removeLocalClip = (id: string) => {
+    const clip = localClips.find((c) => c.id === id)
+    if (clip) URL.revokeObjectURL(clip.output_url)
+    setLocalClips((prev) => prev.filter((c) => c.id !== id))
+    setSelected((prev) => prev.filter((s) => s !== id))
+  }
 
   const toggleSelect = (id: string) => {
     setSelected((prev) =>
@@ -110,7 +143,7 @@ export function VideoStudio() {
       const ff = await loadFFmpeg()
       const { fetchFile } = await import("@ffmpeg/util")
 
-      const selectedVideos = selected.map((id) => videos.find((v) => v.id === id)!).filter(Boolean)
+      const selectedVideos = selected.map((id) => allClips.find((v) => v.id === id)!).filter(Boolean)
 
       for (let i = 0; i < selectedVideos.length; i++) {
         setProgress(`Downloading clip ${i + 1}/${selectedVideos.length}...`)
@@ -149,7 +182,8 @@ export function VideoStudio() {
     setProgress("")
   }
 
-  const selectedVideos = selected.map((id) => videos.find((v) => v.id === id)!).filter(Boolean)
+  const selectedClips = selected.map((id) => allClips.find((v) => v.id === id)!).filter(Boolean)
+  const showUploadOption = !loading
 
   return (
     <Card className="relative overflow-hidden border-purple-500/10 bg-zinc-900/40 shadow-xl shadow-purple-600/5">
@@ -173,19 +207,26 @@ export function VideoStudio() {
               <span className="text-xs text-zinc-500">~{selected.length * 15} sec total</span>
             </div>
             <div className="space-y-1.5 mb-3 max-h-48 overflow-y-auto custom-scrollbar">
-              {selectedVideos.map((v, i) => (
+              {selectedClips.map((v, i) => (
                 <div key={v.id} className="flex items-center gap-2 p-2 rounded-lg bg-zinc-800/70 border border-zinc-700/30">
                   <span className="flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-br from-purple-600 to-pink-600 text-[10px] font-bold text-white shrink-0">{i + 1}</span>
                   <span className="text-xs text-zinc-300 truncate flex-1">{v.prompt}</span>
+                  {v.isLocal && <span className="text-[9px] text-yellow-500 shrink-0">Local</span>}
                   <button type="button" onClick={() => moveUp(v.id)} disabled={i === 0} className="p-1 text-zinc-600 hover:text-zinc-300 disabled:opacity-30 transition-colors rounded hover:bg-zinc-700/50">
                     <ChevronUp className="h-3.5 w-3.5" />
                   </button>
-                  <button type="button" onClick={() => moveDown(v.id)} disabled={i === selectedVideos.length - 1} className="p-1 text-zinc-600 hover:text-zinc-300 disabled:opacity-30 transition-colors rounded hover:bg-zinc-700/50">
+                  <button type="button" onClick={() => moveDown(v.id)} disabled={i === selectedClips.length - 1} className="p-1 text-zinc-600 hover:text-zinc-300 disabled:opacity-30 transition-colors rounded hover:bg-zinc-700/50">
                     <ChevronDown className="h-3.5 w-3.5" />
                   </button>
-                  <button type="button" onClick={() => toggleSelect(v.id)} className="p-1 text-red-400 hover:text-red-300 transition-colors rounded hover:bg-red-400/10">
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </button>
+                  {v.isLocal ? (
+                    <button type="button" onClick={() => removeLocalClip(v.id)} className="p-1 text-red-400 hover:text-red-300 transition-colors rounded hover:bg-red-400/10">
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  ) : (
+                    <button type="button" onClick={() => toggleSelect(v.id)} className="p-1 text-red-400 hover:text-red-300 transition-colors rounded hover:bg-red-400/10">
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  )}
                 </div>
               ))}
             </div>
@@ -203,23 +244,47 @@ export function VideoStudio() {
           </div>
         )}
 
+        {showUploadOption && (
+          <div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="video/mp4,video/webm,video/quicktime"
+              onChange={handleLocalUpload}
+              className="hidden"
+            />
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploadingLocal}
+              className="w-full p-3 rounded-xl border-2 border-dashed border-zinc-800 bg-zinc-900/30 hover:border-zinc-700 hover:bg-zinc-900/50 transition-all duration-300 flex items-center justify-center gap-2 text-sm text-zinc-500 hover:text-zinc-300"
+            >
+              {uploadingLocal ? (
+                <><Loader2 className="h-4 w-4 animate-spin" /> Uploading...</>
+              ) : (
+                <><Upload className="h-4 w-4" /> Upload local video clip</>
+              )}
+            </button>
+          </div>
+        )}
+
         {loading ? (
           <div className="grid grid-cols-2 gap-3">
             {Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className="aspect-video rounded-xl bg-zinc-800/50 animate-pulse" />
             ))}
           </div>
-        ) : videos.length === 0 ? (
+        ) : allClips.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-zinc-600">
             <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-900/20 to-zinc-900 border border-zinc-800/50">
               <VideoIcon className="h-8 w-8 text-purple-500/30" />
             </div>
-            <p className="text-sm text-zinc-400 font-medium">No videos generated yet</p>
-            <p className="text-xs text-zinc-600 mt-1">Generate videos first, then merge them here</p>
+            <p className="text-sm text-zinc-400 font-medium">No videos to merge</p>
+            <p className="text-xs text-zinc-600 mt-1">Generate or upload videos to get started</p>
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-3">
-            {videos.map((v, i) => (
+            {allClips.map((v, i) => (
               <motion.button
                 key={v.id}
                 initial={{ opacity: 0, y: 10 }}
@@ -243,7 +308,7 @@ export function VideoStudio() {
                 />
                 <div className="absolute inset-x-0 bottom-0 p-2 bg-gradient-to-t from-black/90 via-black/50 to-transparent">
                   <p className="text-[10px] text-zinc-300 truncate font-medium">{v.prompt}</p>
-                  <p className="text-[9px] text-zinc-500">{formatDate(v.created_at)}</p>
+                  <p className="text-[9px] text-zinc-500">{v.isLocal ? "Local clip" : formatDate(v.created_at)}</p>
                 </div>
                 {selected.includes(v.id) ? (
                   <div className="absolute top-2 right-2 h-7 w-7 rounded-full bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center shadow-lg shadow-purple-600/40">
@@ -252,6 +317,11 @@ export function VideoStudio() {
                 ) : (
                   <div className="absolute top-2 right-2 h-7 w-7 rounded-full bg-zinc-900/60 backdrop-blur-sm border border-zinc-700/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                     <span className="text-zinc-400 text-xs">+</span>
+                  </div>
+                )}
+                {v.isLocal && (
+                  <div className="absolute top-2 left-2">
+                    <span className="text-[8px] px-1.5 py-0.5 rounded bg-yellow-500/20 text-yellow-400 border border-yellow-500/20">Local</span>
                   </div>
                 )}
               </motion.button>

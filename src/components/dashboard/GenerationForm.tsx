@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   ChevronDown,
@@ -12,6 +12,7 @@ import {
   Zap,
   Loader2,
   Lock,
+  Upload,
 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
@@ -56,6 +57,9 @@ export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
   const [enableUpscale, setEnableUpscale] = useState(false)
   const [enableRemoveBg, setEnableRemoveBg] = useState(false)
   const [enableVoiceover, setEnableVoiceover] = useState(false)
+  const [referenceImage, setReferenceImage] = useState<string | null>(null)
+  const [uploadingRef, setUploadingRef] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const isSubscribed = user?.subscription_plan === "basic" || user?.subscription_plan === "pro"
   const models = type === "image" ? IMAGE_MODELS : VIDEO_MODELS
@@ -96,6 +100,23 @@ export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
     }
   }
 
+  const handleRefUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (!file.type.startsWith("image/")) { toast.error("Please upload an image file"); return }
+    if (file.size > 10 * 1024 * 1024) { toast.error("Max file size 10MB"); return }
+    setUploadingRef(true)
+    const formData = new FormData()
+    formData.append("file", file)
+    try {
+      const res = await fetch("/api/upload", { method: "POST", body: formData })
+      const data = await res.json()
+      if (data.url) setReferenceImage(data.url)
+      else toast.error("Upload failed")
+    } catch { toast.error("Upload failed") }
+    setUploadingRef(false)
+  }
+
   const handleSubmit = async () => {
     if (!canGenerate) return
 
@@ -126,6 +147,7 @@ export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
           upscale: enableUpscale,
           removeBg: enableRemoveBg,
           voiceover: enableVoiceover,
+          image: referenceImage,
         }),
       })
 
@@ -225,6 +247,71 @@ export function GenerationForm({ initialPrompt }: { initialPrompt?: string }) {
             )}
           </AnimatePresence>
         </div>
+
+        {type === "image" && (
+          <div className="space-y-2">
+            <Label className="text-xs text-zinc-500 uppercase tracking-wider">Reference Image</Label>
+            <AnimatePresence mode="wait">
+              {referenceImage ? (
+                <motion.div
+                  key="preview"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  className="relative rounded-xl overflow-hidden border border-zinc-800 bg-zinc-900/50 group"
+                >
+                  <div className="relative aspect-video">
+                    <img src={referenceImage} alt="Reference" className="w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-center justify-center">
+                      <button
+                        type="button"
+                        onClick={() => setReferenceImage(null)}
+                        className="opacity-0 group-hover:opacity-100 transition-opacity px-3 py-1.5 rounded-lg bg-red-500/80 hover:bg-red-500 text-white text-xs font-medium"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="upload"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  onClick={() => fileInputRef.current?.click()}
+                  className="cursor-pointer rounded-xl border-2 border-dashed border-zinc-800 bg-zinc-900/30 hover:border-zinc-700 hover:bg-zinc-900/50 transition-all duration-300 p-5 text-center"
+                >
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleRefUpload}
+                    className="hidden"
+                  />
+                  {uploadingRef ? (
+                    <div className="flex flex-col items-center gap-2">
+                      <Loader2 className="h-6 w-6 animate-spin text-purple-400" />
+                      <p className="text-xs text-zinc-500">Uploading...</p>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-zinc-800/50">
+                        <Upload className="h-5 w-5 text-zinc-500" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-zinc-400">
+                          <span className="text-purple-400 font-medium">Upload</span> a reference image
+                        </p>
+                        <p className="text-[10px] text-zinc-600 mt-0.5">PNG, JPG, WEBP &middot; Max 10MB</p>
+                      </div>
+                    </div>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        )}
 
         <TemplatesGallery onSelect={handleTemplateSelect} />
 

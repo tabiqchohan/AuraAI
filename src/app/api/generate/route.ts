@@ -15,7 +15,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json()
-    const { prompt, type, model, width, height, negative_prompt, seed, batch_count, duration, aspect_ratio, upscale, removeBg, voiceover } = body
+    const { prompt, type, model, width, height, negative_prompt, seed, batch_count, duration, aspect_ratio, upscale, removeBg, voiceover, image } = body
 
     if (!prompt || !type) {
       return NextResponse.json({ error: "Missing required fields: prompt, type" }, { status: 400 })
@@ -115,7 +115,7 @@ export async function POST(request: Request) {
       }
 
       if (type === "image") {
-        generateImage(prompt, { model, width, height, negative_prompt, seed })
+        generateImage(prompt, { model, width, height, negative_prompt, seed, image })
           .then(handleOutput)
           .catch(handleError)
       } else {

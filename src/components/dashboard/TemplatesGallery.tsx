@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { ImageIcon, VideoIcon, Sparkles, Search, ChevronDown, ChevronUp, Crown, Lock } from "lucide-react"
+import { ImageIcon, VideoIcon, Sparkles, Search, ChevronDown, ChevronUp, Crown, Lock, Play } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { TEMPLATES, type Template } from "@/lib/constants"
 import { useUser } from "@/hooks/useUser"
@@ -10,6 +10,27 @@ import type { GenerationType } from "@/types"
 
 interface TemplatesGalleryProps {
   onSelect: (template: Template) => void
+}
+
+function TemplatePreview({ template }: { template: Template }) {
+  const [imgError, setImgError] = useState(false)
+  const [loaded, setLoaded] = useState(false)
+
+  return (
+    <div
+      className="relative w-full aspect-[4/3] rounded-lg overflow-hidden"
+      style={{ background: `linear-gradient(135deg, ${template.previewColors?.[0] || "#1e1b4b"}, ${template.previewColors?.[1] || "#7c3aed"})` }}
+    >
+      <div className="absolute inset-0 flex items-center justify-center">
+        <span className="text-3xl opacity-40">{template.emoji}</span>
+      </div>
+      {template.type === "video" && (
+        <div className="absolute bottom-1.5 right-1.5 flex items-center gap-1 rounded-md bg-black/60 px-1.5 py-0.5 text-[9px] text-white">
+          <Play className="h-2.5 w-2.5 fill-white" />
+        </div>
+      )}
+    </div>
+  )
 }
 
 export function TemplatesGallery({ onSelect }: TemplatesGalleryProps) {
@@ -120,7 +141,7 @@ export function TemplatesGallery({ onSelect }: TemplatesGalleryProps) {
                   transition={{ delay: i * 0.03 }}
                   type="button"
                   onClick={() => handleSelect(template)}
-                  className={`flex flex-col items-start gap-1.5 p-3 rounded-xl border transition-all duration-300 text-left group relative ${
+                  className={`flex flex-col items-start gap-1.5 p-2.5 rounded-xl border transition-all duration-300 text-left group relative ${
                     template.premium
                       ? "bg-gradient-to-br from-amber-900/15 to-amber-950/10 border-amber-500/20 hover:border-amber-500/40 hover:shadow-lg hover:shadow-amber-600/10"
                       : "bg-zinc-900/50 border-zinc-800/50 hover:border-purple-500/30 hover:bg-zinc-800/50 hover:shadow-lg hover:shadow-purple-600/5"
@@ -133,24 +154,16 @@ export function TemplatesGallery({ onSelect }: TemplatesGalleryProps) {
                       </span>
                     </div>
                   )}
-                  <div className="flex items-center gap-2 w-full">
-                    <span className="text-lg">{template.emoji}</span>
+                  <TemplatePreview template={template} />
+                  <div className="flex items-center gap-2 w-full px-0.5">
                     <span className="text-xs font-medium text-zinc-300 truncate flex-1">{template.name}</span>
                     {template.premium && (
                       <span className="flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-gradient-to-r from-amber-500/15 to-orange-500/15 text-amber-400 text-[9px] font-medium border border-amber-500/20">
                         <Crown className="h-2.5 w-2.5" /> Pro
                       </span>
                     )}
-                    {template.type === "video" ? (
-                      <VideoIcon className="h-3 w-3 text-blue-400 shrink-0" />
-                    ) : (
-                      <ImageIcon className="h-3 w-3 text-purple-400 shrink-0" />
-                    )}
                   </div>
-                  <p className="text-[11px] text-zinc-600 line-clamp-1">{template.description}</p>
-                  <span className="text-[10px] text-zinc-700 group-hover:text-purple-400/70 transition-colors">
-                    {template.premium && !isPremium ? "Upgrade to use" : "Click to use"}
-                  </span>
+                  <p className="text-[11px] text-zinc-600 line-clamp-1 px-0.5">{template.description}</p>
                 </motion.button>
               ))}
               {filtered.length === 0 && (
